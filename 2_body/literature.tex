@@ -1,0 +1,126 @@
+\section{Quantum Computing}
+Quantum computing is based on the principles of quantum mechanics, which describe the behaviour of particles at the atomic and subatomic levels.
+
+This section provides a brief overview of the fundamental concepts of quantum computing that are relevant to understanding the non-variational QWOA and its application to the graph similarity problem. 
+
+\subsection{Qubits and Quantum Superposition}
+
+The fundamental unit of information in classical computing is the bit, which can exist in one of two states, typically written as 0 or 1.
+
+In quantum computing, the basic unit of information is the quantum bit or qubit. Unlike classical bits, which can only be in one state at a time, qubits can exist in a superposition of states.
+
+Qubits are mathematically described by their state vectors in a \(2^n\) dimensional complex vector space, where \(n\) is the number of qubits. A qubit's state can be represented as the weighted sum of its basis states. A common choice of basis states is called the standard basis, consisting of the states \( \ket{0} \) and \( \ket{1} \), which are the positive and negative eigenvalues of the Pauli Z operator. A general state of a single qubit can be expressed as:
+
+\[\ket{\psi} = \alpha\ket{0} + \beta\ket{1}\]
+\\
+where \( \alpha \) and \( \beta \) are complex numbers that satisfy the normalization condition \( |\alpha|^2 + |\beta|^2 = 1 \). The Born rule states that the coefficients \( |\alpha|^2 \) and \( |\beta|^2 \) represent the probabilities of measuring the qubit in the states \( \ket{0} \) and \( \ket{1} \), respectively.
+
+When multiple qubits are combined, their joint state is represented by the tensor product of their individual states. For example, the state of a two-qubit system can be expressed as:
+
+\[\ket{\psi_{12}} = \ket{\psi_1} \otimes \ket{\psi_2} = (\alpha_1\ket{0} + \beta_1\ket{1}) \otimes (\alpha_2\ket{0} + \beta_2\ket{1})\]
+\[= \alpha_1\alpha_2\ket{00} + \alpha_1\beta_2\ket{01} + \beta_1\alpha_2\ket{10} + \beta_1\beta_2\ket{11}\]
+
+where \( \ket{00}, \ket{01}, \ket{10}, \) and \( \ket{11} \) are the basis states of the two-qubit system.
+
+This allows a quantum computer with \(n\) qubits to represent \(2^n\) states simultaneously, which is a key feature that enables quantum parallelism, allowing quantum computers to perform certain computations more efficiently than classical computers.
+
+Despite this parallelism, the computational power is limited by the fact that measuring a quantum state collapses it to one of its basis states, yielding only a single outcome. Therefore, quantum algorithms must be carefully designed to manipulate the amplitudes of the quantum states such that the desired outcomes have higher probabilities of being measured.
+
+\subsection{Quantum Gates, Entanglement}
+
+Quantum gates are the building blocks of quantum circuits, analogous to classical logic gates. They manipulate the states of qubits through unitary transformations, which are reversible operations that preserve the total probability of the quantum system. Common quantum gates include the Hadamard gate, which creates superposition, and the CNOT gate, which entangles two qubits. 
+
+We can visually represent a series of quantum gates acting on qubits using a quantum circuit diagram. For example, the following diagram shows a simple quantum circuit with two qubits and two gates:
+
+\begin{quantikz}
+\lstick{\ket{0}} & \gate{H} & \ctrl{1} & \meter{} \\
+\lstick{\ket{0}} & \qw      & \targ{}  & \meter{}
+\end{quantikz}
+
+This diagram represents a circuit where the first qubit is put into superposition by the Hadamard gate (H), and then a CNOT gate acts on the second qubit depending on whether the first qubit is in a \(\ket{1}\) state or the \(\ket{0}\) state. Finally, both qubits are measured.
+
+The final quantum state before measurement is given by:
+\[\ket{\psi} = \frac{1}{\sqrt{2}}(\ket{00} + \ket{11})\]
+This state is an example of entanglement, a unique quantum phenomenon where the states of two or more qubits become correlated such that the state of one qubit cannot be described independently of the state of the other qubit(s). For instance, in the entangled state above, measuring the first qubit allows one to infer the state of the second qubit.
+
+These correlations are fundamental to quantum algorithms. Without entanglement, quantum computers could be efficiently simulated by classical computers, negating any advantage.
+
+\subsection{Quantum Algorithms and Challenges}
+
+Quantum algorithms seek to leverage properties of qubits and quantum gates to solve specific problems more efficiently than classical algorithms. Notable examples include Shor's algorithm for integer factorization, which runs exponentially faster than the best-known classical algorithms, and Grover's algorithm for unstructured search, which provides a quadratic speedup over classical search algorithms.
+
+Large, universal, fault-tolerant quantum computers that can run these algorithms at useful scales will require millions of qubits. While researchers have made significant progress in error correction, coherence times, qubit connectivity, and gate fidelities, fault tolerant quantum computing may take decades to achieve. In the meantime, Noisy Intermediate-Scale Quantum (NISQ) computers already exist, and can run small-scale quantum algorithms that can provide insights into quantum behavior and inform the development of larger systems.
+
+These NISQ devices are limited by the number of qubits, gate fidelities, and coherence times. As a result, quantum algorithms designed for NISQ devices must be efficient in terms of qubit usage and circuit depth to minimize the impact of noise and errors. 
+
+Even if NISQ devices cannot solve problems faster than the best classical computers using the best classical algorithms (particularly with the emergence of exascale supercomputing), they could still provide an economic advantage by using less energy or by being lower cost to build and operate.
+
+NISQ algorithms are designed to work within these low-resource constraints. Examples include the Variational Quantum Eigensolver (VQE) for quantum chemistry and the Quantum Approximate Optimization Algorithm (QAOA) for combinatorial optimisation problems. These algorithms typically involve a hybrid approach, where a quantum computer is used to prepare and measure quantum states, while a classical computer optimises parameters based on the measurement results.
+
+\section{Combinatorial Optimisation Problems}
+Combinatorial optimisation problems consist of a discrete set of feasible solutions, which can be represented as a set $S$, with finite order $N=|S|$. Each of the $N$ solutions $\mathbf{x} \in S$ can be represented as a vector of $n$ variables $\mathbf{x}=(x_1, x_2,...,x_n)$ and has an associated objective value (or cost), given by a objective function (or cost function) $f:S\rightarrow\mathbb{R}$, which gives a measure of the quality of any solution. The goal of the optimisation problem is to find the \textit{optimal solution} $\mathbf{x}^*$ that maximises (or minimises) the objective (or cost) function:
+$$\mathbf{x}^* = \arg\min_{\mathbf{x} \in S} f(\mathbf{x})
+\;\text{or}\;
+\mathbf{x}^* = \arg\max_{\mathbf{x} \in S} f(\mathbf{x})$$
+The structure of the objective function is determined by the problem definition. The problem definition consists of a series of criteria which are defined on a subset of the variables in $\mathbf{x}$, and the objective function conveys the extent to which a solution satisfies the criteria.
+
+Combinatorial optimisation problems are often NP-hard, meaning that no known polynomial-time algorithm can exactly solve all instances of the problem. Examples of NP-hard combinatorial optimisation problems include the travelling salesman problem and the knapsack problem.
+
+The main challenge in solving these problems is that they often require a near-exhaustive search of the solution space, which usually grows exponentially or super-exponentially with problem size. An example of this super-exponential growth will be present in the graph similarity problem in section \ref{graph_sim_section}.
+
+Research in sub-exponential combinatorial optimisation algorithms includes the topics of:
+\begin{itemize}
+    \item Exact algorithms that find optimal solutions for special problem instances with certain properties.\todo{Citations Here}
+    \item Approximate algorithms that find solutions which are near the optimal solutions for general problem instances.
+\end{itemize}
+
+This thesis will focus on approximate algorithms.
+
+To quantify how close a solution $\mathbf{x}_i$ is to the optimal solution, the approximation ratio $A$ is used:
+$$A_i = \frac{f(\mathbf{x}_i)}{f(\mathbf{x}^*)}$$
+This value compares the objective value of a solution against the maximum possible objective value. A successful approximate combinatorial optimisation algorithm should find solutions which give approximation ratios close to 1.
+
+\section{Graph Similarity Problem}\label{graph_sim_section}
+The graph similarity problem involves determining how similar two graphs are to each other. This can be useful in various applications, such as social network analysis, bioinformatics, and pattern recognition. 
+
+There is a need to distinguish between the graph similarity problem and the graph isomorphism problem.
+
+A pair of graphs $G_1$ and $G_2$ are considered isomorphic if and only if there exists a bijection between their vertex sets such that any two vertices in $G_1$ are adjacent if and only if their corresponding vertices in $G_2$ are also adjacent. In this definition, the graphs are understood to be undirected, non-labelled, non-weighted graphs. However, isomorphism may apply to all other notions of graph by adding requirements to preserve any additional structures.
+
+The graph isomorphism problem is then the task of correctly creating the bijection (or equivalently, proving that one exists). Algorithms that solve this problem are trivially verifiable, as checking the correctness of the solution only involves checking that the vertex bijection correctly preserves the edges.
+
+In contrast, the graph similarity problem is the problem of calculating how close a pair of graphs are to being isomorphic. There are multiple methods of quantifying graph similarity. Some examples include:
+\begin{itemize}
+    \item \textit{Graph Edit Distance (GED):} Counts how many `edits' are required to transform one graph into another, where `edits' include inserting/deleting a vertex or edge, or substiting one vertex or edge with another. The lower the distance, the more similar the two graphs are.
+    \item \textit{Maximum Common Subgraph (MCS):} Finds the largest induced subgraph that is common to the two given graphs. The larger the subgraph, the more similar the two graphs are.
+    \item \textit{Frobenius Distance:} Calculates the distance between two graphs using the difference between their adjacency matrices. The lower the distance, the more similar the two graphs are.
+    \item \textit{Edge Overlap}: Finds the proportion of matching entries in the adjacency matrices of the graphs. The greater the proportion, the more similar the two graphs are.
+\end{itemize}
+
+The choice of method often depends on the specific application and the properties of the graphs being compared. Considerations such as cost, time, and interpretability inform the choice of which method to use.
+
+The case of non-labelled graphs is particularly hard to solve, as most algorithms assume a known bijection between the vertices of the given graphs. This assumption does not hold in general for real-world applications for graph similarity. The methods listed above are variant with respect to the correspondence between the vertices. While some correspondence-invariant methods exist, they are limited in interpretability. \todo{Come back to this paragraph.}
+
+In this thesis, the assumption of a known vertex correspondence will be discarded. This greatly increases the difficulty of the problem, as we must find the node correspondence between the graphs that maximises their similarity (or, equivalently, minimises their distance). This turns the graph similarity problem into a combinatorial optimisation problem.
+
+\subsection{Problem Definition}
+The formal definition for the unlabelled graph similarity problem is as follows:
+
+Let $G_1=(V_1,E_1)$ and $G_2=(V_2,E_2)$ be two finite, simple graphs with $|V_1|=|V_2|$, and considered \textit{unlabelled} in the sense that vertex identifiers carry no intrinsic meaning
+
+Let $\Pi(V_1,V_2)$ denote the set of all bijections $\pi: V_1 \to V_2$.
+
+Given a base similarity function $f:\mathcal{G}\times\mathcal{G}\to \mathbb{R}$ that compares labelled graphs from the class $\mathcal{G}$ of all finite simple graphs, the \textit{unlabelled similarity} between $G_1$ and $G_2$ is defined as
+
+$$\text{Sim}(G_1,G_2)= \max_{\pi\in\Pi(V_1,V_2)} f(G_1, \pi(G_2))$$
+
+where $\pi(G_2)$ denotes the relabelling of $G_2$ induced by $\pi$.
+
+The unlabelled graph similarity problem is the problem of computing $\text{Sim}(G_1,G_2)$.
+
+This problem is known to be NP-hard, meaning that there is no known polynomial-time algorithm to solve it for all instances. As a result, various heuristic and approximation techniques have been developed to tackle the graph similarity problem.
+
+\section{Quantum Variational Algorithms}
+Quantum variational algorithms are a class of hybrid quantum-classical algorithms that leverage the strengths of both quantum and classical computing to solve optimization problems. They are particularly well-suited for NISQ devices due to their relatively low resource requirements and robustness to noise.
+
+VQAs use classical machine learning to learn parameters for a quantum circuit, which is then executed on a quantum computer. The results of the quantum computation are used to evaluate a cost function, which is then minimized using classical optimization techniques. This process is repeated iteratively until convergence.
