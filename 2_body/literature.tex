@@ -32,15 +32,15 @@ Quantum gates are the building blocks of quantum circuits, analogous to classica
 
 We can visually represent a series of quantum gates acting on qubits using a quantum circuit diagram. For example, the following diagram shows a simple quantum circuit with two qubits and two gates:
 
-\begin{quantikz}
-\lstick{\ket{0}} & \gate{H} & \ctrl{1} & \meter{} \\
-\lstick{\ket{0}} & \qw      & \targ{}  & \meter{}
-\end{quantikz}
+$$\begin{quantikz}
+    \lstick{\ket{0}} & \gate{H} & \ctrl{1} & \meter{} \\
+    \lstick{\ket{0}} & \qw      & \targ{}  & \meter{}
+\end{quantikz}$$
 
 This diagram represents a circuit where the first qubit is put into superposition by the Hadamard gate (H), and then a CNOT gate acts on the second qubit depending on whether the first qubit is in a \(\ket{1}\) state or the \(\ket{0}\) state. Finally, both qubits are measured.
 
 The final quantum state before measurement is given by:
-\[\ket{\psi} = \frac{1}{\sqrt{2}}(\ket{00} + \ket{11})\]
+$$\ket{\psi} = \frac{1}{\sqrt{2}}(\ket{00} + \ket{11})$$
 This state is an example of entanglement, a unique quantum phenomenon where the states of two or more qubits become correlated such that the state of one qubit cannot be described independently of the state of the other qubit(s). For instance, in the entangled state above, measuring the first qubit allows one to infer the state of the second qubit.
 
 These correlations are fundamental to quantum algorithms. Without entanglement, quantum computers could be efficiently simulated by classical computers, negating any advantage.
@@ -120,7 +120,28 @@ The unlabelled graph similarity problem is the problem of computing $\text{Sim}(
 
 This problem is known to be NP-hard, meaning that there is no known polynomial-time algorithm to solve it for all instances. As a result, various heuristic and approximation techniques have been developed to tackle the graph similarity problem.
 
-\section{Quantum Variational Algorithms}
-Quantum variational algorithms are a class of hybrid quantum-classical algorithms that leverage the strengths of both quantum and classical computing to solve optimization problems. They are particularly well-suited for NISQ devices due to their relatively low resource requirements and robustness to noise.
+\section{Variational Quantum Algorithms and the QAOA}
+\subsection{VQAs}
+Variational Quantum Algorithms (VQAs) are a class of hybrid quantum-classical algorithms that leverage the strengths of both quantum and classical computing to solve optimisation problems. They are particularly well-suited for NISQ devices due to their relatively low resource requirements and robustness to noise.
 
-VQAs use classical machine learning to learn parameters for a quantum circuit, which is then executed on a quantum computer. The results of the quantum computation are used to evaluate a cost function, which is then minimized using classical optimization techniques. This process is repeated iteratively until convergence.
+VQAs implement a parametrised quantum circuit (PQC) whose unitary evolution is governed by a set of $d$ classically tunable parameters $\mathbf{\theta}\in\mathbb{R}^d$. The quantum device prepares the state
+$$\ket{\psi(\mathbf{\theta})}=U(\mathbf{\theta})\ket{0}^{\otimes n}$$
+where $U(\mathbf{\theta})$ is a depth-restricted circuit composed of parameterised single- and multi-qubit gates, and $n$ is the number of qubits in the input to the quantum computer. Commonly, $d=\mathcal{O}(\text{poly}(n))$, since we seek efficient circuits that are polynomial in resources. \todo{citation here.}
+
+The objective function of the algorithm is typically expressed as the expectation value of a Hermitian operator $H$ with repect to the variational state:
+$$C(\mathbf{\theta})= \bra{\psi(\mathbf{\theta})}H\ket{\psi(\mathbf{\theta})} $$
+
+This cost function is estimated on the quantum device via repeated projective measurements in appropriate bases. A classical optimiser updates $\mathbf{\theta}$ with the aim of minimising (or maximising) $C(\mathbf{\theta})$, thus driving the quantum circuit towards a state that approximates the optimal configuration with repect to the target problem. The algorithm halts after the output from the quantum computer is `good enough' at approximating the optimal configuration.
+
+To summarise, VQAs consist of a two-step loop: a quantum computer evolves the initial state to a final state via a PQC, then a classical computer measures the expectation value of the final state and uses this data to update the PQC. At the end of this loop, the quantum computer's output is now a good approximation of the optimal configuration.
+
+\subsection{QAOA}
+The Quantum Approximate Optimisation Algorithm (QAOA) is a subclass of VQAs designed to solve combinatorial optimsiation problems, introduced by Farhi et al.
+
+\subsection{Challenges}
+Although VQAs are a promising platform for NISQ computing, their effective performance relies on the computationally expensive tuning of an often prohibitively large number of variational parameters. Additionally, the performance of these variational algorithms is highly dependent on the initialisation of the variational parameters. \todo{rewrite in own words}
+
+Therefore, it can be argued that VQAs replace one difficult optimisation problem with another difficult optimisation problem.
+
+\section{Quantum Walk-based Optimisation}
+The NVQWOA 
