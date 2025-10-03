@@ -10,30 +10,8 @@ Since the space of permutations grows as $n!$, it becomes classically infeasible
 
 The non-variational QWOA was simulated for 5 iterations. The initial and final probability distributions over the possible similarity scores are shown in figure \ref{fig:similarity_scores}. The initial distribution is approximately normal, centred around a similarity score of 0.5, which is expected since most permutations will yield a similarity score around this value. After 5 iterations of the algorithm, the distribution has shifted significantly towards higher similarity scores, with a pronounced peak at 0.7. This indicates that the algorithm has successfully concentrated probability mass on the optimal solution.
 
-\begin{figure}
-\centering
-\begin{subfigure}{0.45\textwidth}
-    \centering
-    \includegraphics[width=\textwidth]{Figs/n=10_graph_1.png}
-    \caption{Graph 1}
-\end{subfigure}
-\hfill
-\begin{subfigure}{0.45\textwidth}
-    \centering
-    \includegraphics[width=\textwidth]{Figs/n=10_graph_2.png}
-    \caption{Graph 2}
-\end{subfigure}
-\caption{The two graphs used in the first $n=10$ simulation. Graph 2 is derived from Graph 1 by removing one edge. Note that the nodes have been matched for visual clarity here, but node matching information is not available to the algorithm.}
-\label{fig:graphs}
-\end{figure}
 
-\begin{figure}
-\centering
-\includegraphics[width=0.5\textwidth]{Figs/n=10_Similarity_scores.png}
-\caption{The initial and final probability distributions over similarity scores after 5 iterations of the non-variational QWOA for the $n=10$ case. The initial distribution is approximately normal, centred around a similarity score of 0.55. After 5 iterations, the distribution has shifted significantly towards higher similarity scores, with a pronounced peak at the optimal score of 0.7.}
-\label{fig:similarity_scores}
-\end{figure}
 
 \section{Multiple Problem Instances}
 
-Oh yeah.
+Ten random graphs with ten vertices 

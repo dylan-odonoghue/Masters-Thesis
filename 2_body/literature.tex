@@ -47,7 +47,7 @@ These correlations are fundamental to quantum algorithms. Without entanglement, 
 
 \subsection{Quantum Algorithms and Challenges}
 
-Quantum algorithms seek to leverage properties of qubits and quantum gates to solve specific problems more efficiently than classical algorithms. Notable examples include Shor's algorithm for integer factorization, which runs exponentially faster than the best-known classical algorithms, and Grover's algorithm for unstructured search, which provides a quadratic speedup over classical search algorithms.
+Quantum algorithms seek to leverage properties of qubits and quantum gates to solve specific problems more efficiently than classical algorithms. Notable examples include Shor's algorithm for integer factorization\cite{Shor_algorithm}, which runs exponentially faster than the best-known classical algorithms, and Grover's algorithm for unstructured search\cite{grover_search}, which provides a quadratic speedup over classical search algorithms.
 
 Large, universal, fault-tolerant quantum computers that can run these algorithms at useful scales will require millions of qubits. While researchers have made significant progress in error correction, coherence times, qubit connectivity, and gate fidelities, fault tolerant quantum computing may take decades to achieve. In the meantime, Noisy Intermediate-Scale Quantum (NISQ) computers already exist, and can run small-scale quantum algorithms that can provide insights into quantum behavior and inform the development of larger systems.
 
@@ -55,10 +55,10 @@ These NISQ devices are limited by the number of qubits, gate fidelities, and coh
 
 Even if NISQ devices cannot solve problems faster than the best classical computers using the best classical algorithms (particularly with the emergence of exascale supercomputing), they could still provide an economic advantage by using less energy or by being lower cost to build and operate.
 
-NISQ algorithms are designed to work within these low-resource constraints. Examples include the Variational Quantum Eigensolver (VQE) for quantum chemistry and the Quantum Approximate Optimization Algorithm (QAOA) for combinatorial optimisation problems. These algorithms typically involve a hybrid approach, where a quantum computer is used to prepare and measure quantum states, while a classical computer optimises parameters based on the measurement results.
+NISQ algorithms are designed to work within these low-resource constraints. These algorithms typically involve a hybrid approach, where a quantum computer is used to prepare and measure quantum states, while a classical computer optimises parameters based on the measurement results. Some examples of NISQ-era algorithms are described in the following sections.
 
 \section{Combinatorial Optimisation Problems}
-Combinatorial optimisation problems consist of a discrete set of feasible solutions, which can be represented as a set $S$, with finite order $N=|S|$. Each of the $N$ solutions $\mathbf{x} \in S$ can be represented as a vector of $n$ variables $\mathbf{x}=(x_1, x_2,...,x_n)$ and has an associated objective value (or cost), given by a objective function (or cost function) $f:S\rightarrow\mathbb{R}$, which gives a measure of the quality of any solution. The goal of the optimisation problem is to find the \textit{optimal solution} $\mathbf{x}^*$ that maximises (or minimises) the objective (or cost) function:
+Combinatorial optimisation problems consist of a discrete set of feasible solutions, which can be represented as a set $S$, with finite order $N=|S|$. Each of the $N$ solutions $\mathbf{x} \in S$ can be represented as a vector of $n$ variables $\mathbf{x}=(x_1, x_2,...,x_n)$, where $x_j\in\{0,1,...,k-1\}$ are called the \textit{decision variables}. The solution space $S$ may contain all possible solutions of this form (of which there are $N=k^n$) or $S$ may be restricted to solutions which satisfy some constraint (such as in the case of permuation-based problems where $k=n$ and $N=n!$).\todo{own words} Each solution has an associated objective value (or cost), given by a objective function (or cost function) $f:S\rightarrow\mathbb{R}$, which gives a measure of the quality of any solution. The goal of the optimisation problem is to find the \textit{optimal solution} $\mathbf{x}^*$ that maximises (or minimises) the objective (or cost) function:
 $$\mathbf{x}^* = \arg\min_{\mathbf{x} \in S} f(\mathbf{x})
 \;\text{or}\;
 \mathbf{x}^* = \arg\max_{\mathbf{x} \in S} f(\mathbf{x})$$
@@ -85,26 +85,43 @@ The graph similarity problem involves determining how similar two graphs are to 
 
 There is a need to distinguish between the graph similarity problem and the graph isomorphism problem.
 
-A pair of graphs $G_1$ and $G_2$ are considered isomorphic if and only if there exists a bijection between their vertex sets such that any two vertices in $G_1$ are adjacent if and only if their corresponding vertices in $G_2$ are also adjacent. In this definition, the graphs are understood to be undirected, non-labelled, non-weighted graphs. However, isomorphism may apply to all other notions of graph by adding requirements to preserve any additional structures.
+A pair of graphs $G_1$ and $G_2$ are considered isomorphic ($G_1\cong G_2$) if and only if there exists a bijection between their vertex sets such that any two vertices in $G_1$ are adjacent if and only if their corresponding vertices in $G_2$ are also adjacent. In this definition, the graphs are understood to be undirected, non-labelled, non-weighted graphs. However, isomorphism may apply to all other notions of graph by adding requirements to preserve any additional structures.
 
 The graph isomorphism problem is then the task of correctly creating the bijection (or equivalently, proving that one exists). Algorithms that solve this problem are trivially verifiable, as checking the correctness of the solution only involves checking that the vertex bijection correctly preserves the edges.
 
-In contrast, the graph similarity problem is the problem of calculating how close a pair of graphs are to being isomorphic. There are multiple methods of quantifying graph similarity. Some examples include:
+In contrast, the graph similarity problem is the problem of calculating how close a pair of graphs are to being isomorphic. There are multiple measures of graph similarity. Some examples include:
+
 \begin{itemize}
     \item \textit{Graph Edit Distance (GED):} Counts how many `edits' are required to transform one graph into another, where `edits' include inserting/deleting a vertex or edge, or substiting one vertex or edge with another. The lower the distance, the more similar the two graphs are.
     \item \textit{Maximum Common Subgraph (MCS):} Finds the largest induced subgraph that is common to the two given graphs. The larger the subgraph, the more similar the two graphs are.
     \item \textit{Frobenius Distance:} Calculates the distance between two graphs using the difference between their adjacency matrices. The lower the distance, the more similar the two graphs are.
-    \item \textit{Edge Overlap}: Finds the proportion of matching entries in the adjacency matrices of the graphs. The greater the proportion, the more similar the two graphs are.
+    \item \textit{Edge Overlap:} Finds the proportion of matching entries in the adjacency matrices of the graphs. The greater the proportion, the more similar the two graphs are.\cite{QAOA_graph_sim}
 \end{itemize}
 
-The choice of method often depends on the specific application and the properties of the graphs being compared. Considerations such as cost, time, and interpretability inform the choice of which method to use.
+The choice of measure often depends on the specific application and the properties of the graphs being compared. Considerations such as cost, time, and interpretability inform which measure is best for a practical problem.
 
-The case of non-labelled graphs is particularly hard to solve, as most algorithms assume a known bijection between the vertices of the given graphs. This assumption does not hold in general for real-world applications for graph similarity. The methods listed above are variant with respect to the correspondence between the vertices. While some correspondence-invariant methods exist, they are limited in interpretability. \todo{Come back to this paragraph.}
+Koutra et al. \cite{deltacon} formalised a set of axioms that graph similarity measures should conform to: \todo{probably bring up mapping the outputs to [0,1]}
+\begin{enumerate}
+    \item Identity: $sim(G_{1},G_{2})=1 \iff G_{1} \cong G_{2}$ \label{axiom:1}
+    \item Symmetric:  $sim(G_{1},G_{2})=sim(G_{2},G_{1})$ \label{axiom:2}
+    \item Zero: For a clique graph $G_{1}$ and a empty graph $G_{2}$, 
+    $\lim_{n \to \infty} sim(G_{1},G_{2}) = 0$ \label{axiom:3}
+\end{enumerate}
 
-In this thesis, the assumption of a known vertex correspondence will be discarded. This greatly increases the difficulty of the problem, as we must find the node correspondence between the graphs that maximises their similarity (or, equivalently, minimises their distance). This turns the graph similarity problem into a combinatorial optimisation problem.
+The measures listed above can all be minimally adapted to satisfy these axioms.
+
+Most graph similarity measures assume a given mapping between the vertices of the graphs. Unlike in graph isomorphism, this vertex mapping doesn't need to be a bijection, since there exists a notion of similarity between graphs with a different number of vertices. For graph similarity methods such as those listed previously, the choice of vertex mapping can change the final result. However, Koutra's axiom \ref{axiom:1} requires that graph similarity measures can identify isomorphic graphs by giving them a similarity of 1.
+
+So to satisfy Koutra's axioms, we must find a mapping between the graphs that maximises their similarity.
+
+To find the best mapping between labelled graphs, one can simply `pair up' the vertices in the graphs so that each pair consists of one vertex from each graph that share the same label. This significantly reduces the number of possible mappings (often to just 1), so finding the mapping with the maximum similarity is simple.
+
+To find the best mapping between unlabelled graphs is very challenging. In the general case, the similarity associated with every possible permutation of mappings must be checked until either a mapping that shows isomorphism (or another verifiable global maximum) is found, or the entire space of mappings has been searched.
+
+As such, the unlabelled graph similarity problem can be defined in terms of a combinatorial optimisation problem.
 
 \subsection{Problem Definition}
-The formal definition for the unlabelled graph similarity problem is as follows:
+A formal definition for the unlabelled graph similarity problem is as follows:
 
 Let $G_1=(V_1,E_1)$ and $G_2=(V_2,E_2)$ be two finite, simple graphs with $|V_1|=|V_2|$, and considered \textit{unlabelled} in the sense that vertex identifiers carry no intrinsic meaning
 
@@ -120,8 +137,8 @@ The unlabelled graph similarity problem is the problem of computing $\text{Sim}(
 
 This problem is known to be NP-hard, meaning that there is no known polynomial-time algorithm to solve it for all instances. As a result, various heuristic and approximation techniques have been developed to tackle the graph similarity problem.
 
-\section{Variational Quantum Algorithms and the QAOA}
-\subsection{VQAs}
+\section{Variational Quantum Algorithms}
+\subsection{VQAs in General}
 Variational Quantum Algorithms (VQAs) are a class of hybrid quantum-classical algorithms that leverage the strengths of both quantum and classical computing to solve optimisation problems. They are particularly well-suited for NISQ devices due to their relatively low resource requirements and robustness to noise.
 
 VQAs implement a parametrised quantum circuit (PQC) whose unitary evolution is governed by a set of $d$ classically tunable parameters $\mathbf{\theta}\in\mathbb{R}^d$. The quantum device prepares the state
@@ -136,7 +153,12 @@ This cost function is estimated on the quantum device via repeated projective me
 To summarise, VQAs consist of a two-step loop: a quantum computer evolves the initial state to a final state via a PQC, then a classical computer measures the expectation value of the final state and uses this data to update the PQC. At the end of this loop, the quantum computer's output is now a good approximation of the optimal configuration.
 
 \subsection{QAOA}
-The Quantum Approximate Optimisation Algorithm (QAOA) is a subclass of VQAs designed to solve combinatorial optimsiation problems, introduced by Farhi et al.
+The Quantum Approximate Optimisation Algorithm (QAOA) is a subclass of VQAs designed to solve combinatorial optimsiation problems, introduced by Farhi et al. \cite{QAOA} In this formulation, the PQC is defined by alternating applications of unitaries associated with the problem instance and a mixing operation.
+
+Define a unitary operator $U(Q,\gamma)$ which depends on an angle $\gamma$,
+$$U(Q,\gamma)=e^{i\gamma Q}$$
+
+
 
 \subsection{Challenges}
 Although VQAs are a promising platform for NISQ computing, their effective performance relies on the computationally expensive tuning of an often prohibitively large number of variational parameters. Additionally, the performance of these variational algorithms is highly dependent on the initialisation of the variational parameters. \todo{rewrite in own words}
