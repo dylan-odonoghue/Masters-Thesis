@@ -1,17 +1,63 @@
-Classical simulations of the non-variational QWOA would not be possible without HPC resources, which were provided by the Pawsey Supercomputing Centre. The simulations were performed using QuOp, a Python library for parallel simulation of quantum variational algorithms. \cite{QuOp_MPI_paper_variational,QuOp_MPI}
+\section{Overview}
+We classically simulated the application of the NVQWOA to the graph similarity problem. The measure of graph similarity chosen was Edge Overlap, as it is a low-cost measure that still serves as a interpretable measure of similarity. The aim was to maximise this objective function through matrix exponentiation and multiplication,analytically computing the manipulation of state vector such that the states which corresponded with the optimal solutions (those with the greatest similarity) had an amplified probability of being measured.
 
-\section{Single Problem Instances}
+\section{Classical Simulation}
+To investigate the performance of the NVQWOA on graph similarity problems, we chose to perform classical simulations of a quantum computer, rather than directly performing the algorithm on a quantum computer. Classical simulation allows for computation with negligible stochastic or decoherence errors and complete analysis of the evolving quantum state, something which is inaccessible on real quantum hardware but useful for characterising performance and benchmarking.
 
-A random graph with 10 nodes was generated using the Erdős-Rényi model with an edge probability of 0.5. One edge was then removed to create a second graph, slightly dissimilar to the first. The graphs are shown in Figure \ref{fig:graphs}. Using this construction, it is known that the optimal solution to the graph similarity problem is 0.98 (The adjacency matrices differ in two entries).
+Classical simulation of quantum algorithms and computers can be approached in many different ways. Tensor networks simplify circuits into lower-entanglement systems but has exponentially degrading performance as circuit depth and entanglement entropy. Stabiliser-based approaches can efficiently simulate Clifford-only circuits and certain restricted non-Clifford extensions but cannot capture the arbitrary parameterised unitaries used in the NVQWOA. State vector simulation computes the full evolution of the state vector, but can be costly in computational resources.
 
-This construction was chosen because it is simple to implement and ensures that the graphs are similar, but not identical. Constructing graphs with high similarity is important to demonstrate the algorithm's ability to identify small differences between graphs, which is a key requirement for many practical applications of graph similarity, such as threat detection, social network analysis, or bioinformatics.
+State vector simulation was chosen as the strategy for its accuracy. The Qiskit Aer simulator and related packages were not suitable as the permutation mixer required is a sparse operator rather than a tensor-product of standard gates. Instead, we directly computed the state vector using QuOp, a Python framework for parallel simulation of quantum variational algorithms\cite{QuOp_MPI_paper_variational,QuOp_MPI}. QuOp provides efficient handling of large, sparse unitaries and supports MPI-based parallelisation, allowing simulation of high-dimensional state vectors across multiple compute nodes without loss of precision.
 
-Since the space of permutations grows as $n!$, it becomes classically infeasible to simulate larger graphs. However, there is reason to believe the $n=10$ case is still illustrative of the algorithm's behaviour (the structure of the problem and the nature of the QWOA make it likely that similar patterns will emerge in larger instances). This $n=10$ case requires $10!=3,628,800$ permutations to be evaluated. Since every permutation corresponds to a unique basis state, this requires at least 22 qubits of storage on a quantum computer (since $2^{21} = 2,097,152 < 10! < 2^{22} = 4,194,304$).
+Classical simulations of the non-variational QWOA would not be possible without high-performance computing (HPC) resources, which were provided by the Pawsey Supercomputing Centre.
 
-The non-variational QWOA was simulated for 5 iterations. The initial and final probability distributions over the possible similarity scores are shown in figure \ref{fig:similarity_scores}. The initial distribution is approximately normal, centred around a similarity score of 0.5, which is expected since most permutations will yield a similarity score around this value. After 5 iterations of the algorithm, the distribution has shifted significantly towards higher similarity scores, with a pronounced peak at 0.7. This indicates that the algorithm has successfully concentrated probability mass on the optimal solution.
+\section{QuOp}
+QuOp is a Python 3 module designed for parallel, distributed-memory simulation of QVAs with arbitrary phase-shift and mixing operators. 
 
+To apply it to the NVQWOA, a parameter mapping was used to translate the hyperparameters of the NVQWOA to the individual parameters of a QVA. The quantum circuit was defined to be the two unitaries of the NVQWOA, the phase separator $U_Q$ and the mixer $U_M$. With these modifications, QuOp could simulate the NVQWOA.
 
+\section{Problem Instance Construction}
+There does not exist a widely used library of graph similarity problem instances. To test the algorithm on a wide group of fairly-chosen problems, we randomly generated the graphs using the Erdős-Renyi random graph model.\todo{cite erdos renyi}
+The number of nodes $n$, was varied to investigate how changing problem sizes changed the performance of the algorithm. The probability of edge inclusion was fixed at 0.5 for repeatability.
 
-\section{Multiple Problem Instances}
+Differences in graphs were induced by copying a graph and removing $k$ edges. This allowed the upper limit of similarity to be easily known to be $\frac{n^2-2k}{n^2}$.
 
-Ten random graphs with ten vertices 
+\section{Similarity Measure Choice}
+As described in section \ref{graph_sim_section}, there are many options for the choice of which graph similarity measure to use.
+
+Graph edit distance is the most common choice, but is costly to compute, as it requires the equivalent of a pathfinding search, such as an $A^*$ search algorithm.\todo{cite}
+Since computational resources were a significant pressure, we chose one of the least computationally expensive similarity measures to compute, the edge overlap.
+
+To calculate the edge overlap, the number of matching entries in the adjacency matrices of the graphs are counted and the sum is divided by $n^2$, which corresponds to the size of the adjacency matrices and the maximum possible overlap. This easy calculation also makes the edge overlap highly interpretable. One can imagine the vertex mapping as translating the vertices of one graph to the corresponding vertices in the other graph, and the edge overlap represents how much the edges line up correctly. The edge overlap also works on directed graphs, but directed graphs were not investigated in this thesis.
+
+When the best vertex mapping is known between the two graphs, the edge overlap satisfies Koutra's similarity measure axioms, making it a `good' measure of graph similarity.
+
+A drawback of using edge overlap is that it is not well-defined for graphs with differing numbers of nodes, $|V_1|\neq|V_2|$. This restricts our investigation to graphs with an equal number of nodes.
+
+The choice of graph similarity measure is not expected to have a strong effect on the observed results. The vertex mappings that give strong similarity with any particular measure usually give strong similarity with most measures. For the choice of a specific graph similarity measure to affect the results, it would have to give a different problem structure which significantly alters the structure of qualities.
+
+\section{Phase Separator and Mixer Construction}
+The phase separating unitary was constructed in QuOp. For each vertex mapping, the quality (given as edge overlap) was calculated and stored as an array. This array was converted into a diagonal unitary operator in QuOp.
+
+The mixer was constructed as a column oriented array in Numpy and converted to a compressed sparse row format for storage. This sparse matrix could then be loaded into QuOp using HDF5 parallel I/O operations.\todo{cite HDF5?}
+
+Since we are considering graphs with an equal number of nodes $n$, vertex mappings match the arbitrary vertex indices of each graph to one another with some ordering, $\pi:\{1,...,n\}\to\{1,...,n\}$. (In the unlabelled graph problem, the vertices in each graph can still have indices, just not information that can inform how to match those indices together.) Each $\pi\in\Pi$ corresponds to a distinct reordering of the vertex indices. Therefore, vertex mappings can be equivalently written as permutations of $n$ distinct decision variables.
+
+From this, we can conclude that the correct choice of mixer is the permutation mixer, which connects solutions that are one swap of decision variables away from one another. In terms of vertex mappings, the permutation mixer connects solutions corresponding to mappings which differ only by two vertices that have had their targets swapped. Since these are the nearest neighbours to one another, we can also conclude that the minimum hamming distance from one solution to another is 2.
+
+\section{Hyperparameter Optimisation}
+The NVQWOA has three hyperparameters: $\gamma, t, \beta$. Although sub-optimal parameters can produce quantum circuits that significantly amplify optimal and near-optimal solutions, it is expected that finding optimal values for these hyperparameters through three-dimensional optimisation will give the best possible results.\cite{bennett2024analysisnonvariationalquantumwalkbased}
+ 
+We used three different objective functions as inputs to the optimiser:
+\begin{enumerate}
+    \item \textit{Expected Value}: The expected value of the state vector after amplification. This is the most practical to measure on real quantum hardware.
+    \item \textit{Optimal Solution Probability (OSP)}: The probability of measuring an optimal solution. This is totally impractical to measure on quantum hardware, as it requires foreknowledge of the optimal solution. It is included in our investigation here to provide an upper bound by finding the best possible parameters.
+    \item \textit{Conditional Value at Risk (CVaR)}: The expected value of the $\alpha$-tail of the state vector. This takes more shots to measure on quantum hardware than the expected value, but has been shown to give faster convergence to better solutions.\cite{CVaR_quantum}
+\end{enumerate}
+Optimisation of the NVQWOA hyperparameters was done in QuOp, using the Nelder-Mead method of numerical optimisation\cite{nelder_mead}. This method was chosen after experimentation with various numerical optimisation methods showed that Nelder-Mead converged the most quickly to the optimal parameters.
+
+\section{Procedure}
+\subsection{Amplification Analysis}
+
+\subsection{Mean Hamming Distance Analysis}
+
+\subsection{Hyperparameter Analysis}

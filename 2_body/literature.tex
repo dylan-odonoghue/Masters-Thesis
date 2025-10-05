@@ -9,20 +9,21 @@ The fundamental unit of information in classical computing is the bit, which can
 
 In quantum computing, the basic unit of information is the quantum bit or qubit. Unlike classical bits, which can only be in one state at a time, qubits can exist in a superposition of states.
 
-Qubits are mathematically described by their state vectors in a \(2^n\) dimensional complex vector space, where \(n\) is the number of qubits. A qubit's state can be represented as the weighted sum of its basis states. A common choice of basis states is called the standard basis, consisting of the states \( \ket{0} \) and \( \ket{1} \), which are the positive and negative eigenvalues of the Pauli Z operator. A general state of a single qubit can be expressed as:
+Qubits are physically realised with two-state quantum systems, such as the spin of an electron in which the two states can be taken as spin up or spin down. Qubits are mathematically described by their two-dimensional complex state vectors. Systems of qubits are described in a $2^n$ dimensional complex vector space, where $n$ is the number of qubits. A qubit's state (or the state of a collection of qubits) can be represented as the complex weighted sum of its basis states. A common choice of basis states is called the standard or computational basis, consisting of the states $\ket{0}$ and $\ket{1}$, which are the positive and negative eigenvalues of the Pauli Z operator. A general state of a single qubit can be expressed in the standard basis as:
 
-\[\ket{\psi} = \alpha\ket{0} + \beta\ket{1}\]
-\\
-where \( \alpha \) and \( \beta \) are complex numbers that satisfy the normalization condition \( |\alpha|^2 + |\beta|^2 = 1 \). The Born rule states that the coefficients \( |\alpha|^2 \) and \( |\beta|^2 \) represent the probabilities of measuring the qubit in the states \( \ket{0} \) and \( \ket{1} \), respectively.
+$$\ket{\psi} = \alpha\ket{0} + \beta\ket{1}$$
+
+where $\alpha$ and $\beta$ are complex numbers that satisfy the normalisation condition $|\alpha|^2 + |\beta|^2 = 1$. The Born rule states that the coefficients $|\alpha|^2$  and $|\beta|^2$ represent the probabilities of measuring the qubit in the states $\ket{0}$ and $\ket{1}$, respectively.
 
 When multiple qubits are combined, their joint state is represented by the tensor product of their individual states. For example, the state of a two-qubit system can be expressed as:
+\begin{align*}
+\ket{\psi_{12}} &= \ket{\psi_1} \otimes \ket{\psi_2} = (\alpha_1\ket{0} + \beta_1\ket{1}) \otimes (\alpha_2\ket{0} + \beta_2\ket{1})\\
+&=\alpha_1\alpha_2\ket{0}\ket{0} + \alpha_1\beta_2\ket{0}\ket{1} + \beta_1\alpha_2\ket{1}\ket{0} + \beta_1\beta_2\ket{1}\ket{1}\\
+&= \alpha_1\alpha_2\ket{00} + \alpha_1\beta_2\ket{01} + \beta_1\alpha_2\ket{10} + \beta_1\beta_2\ket{11}
+\end{align*}
+where $\ket{00}, \ket{01}, \ket{10},$ and $\ket{11}$ are the basis states of the two-qubit system.
 
-\[\ket{\psi_{12}} = \ket{\psi_1} \otimes \ket{\psi_2} = (\alpha_1\ket{0} + \beta_1\ket{1}) \otimes (\alpha_2\ket{0} + \beta_2\ket{1})\]
-\[= \alpha_1\alpha_2\ket{00} + \alpha_1\beta_2\ket{01} + \beta_1\alpha_2\ket{10} + \beta_1\beta_2\ket{11}\]
-
-where \( \ket{00}, \ket{01}, \ket{10}, \) and \( \ket{11} \) are the basis states of the two-qubit system.
-
-This allows a quantum computer with \(n\) qubits to represent \(2^n\) states simultaneously, which is a key feature that enables quantum parallelism, allowing quantum computers to perform certain computations more efficiently than classical computers.
+This allows a quantum computer with $n$ qubits to represent $2^n$ states simultaneously, which is a key feature that enables quantum parallelism, allowing quantum computers to perform certain computations more efficiently than classical computers.
 
 Despite this parallelism, the computational power is limited by the fact that measuring a quantum state collapses it to one of its basis states, yielding only a single outcome. Therefore, quantum algorithms must be carefully designed to manipulate the amplitudes of the quantum states such that the desired outcomes have higher probabilities of being measured.
 
@@ -37,11 +38,19 @@ $$\begin{quantikz}
     \lstick{\ket{0}} & \qw      & \targ{}  & \meter{}
 \end{quantikz}$$
 
-This diagram represents a circuit where the first qubit is put into superposition by the Hadamard gate (H), and then a CNOT gate acts on the second qubit depending on whether the first qubit is in a \(\ket{1}\) state or the \(\ket{0}\) state. Finally, both qubits are measured.
+This diagram represents a circuit where the first qubit is put into superposition by the Hadamard gate (H), and then a CNOT gate acts on the second qubit depending on whether the first qubit is in a \(\ket{1}\) state or the \(\ket{0}\) state. Finally, both qubits are measured. 
 
-The final quantum state before measurement is given by:
+The quantum state begins as:
+$$\ket{\psi}=\ket{00}$$
+Then after the Hadamard gate is applied, the quantum state is:
+$$\ket{\psi_H}=\frac{1}{\sqrt{2}}(\ket{00} + \ket{10})$$
+Finally the CNOT gate is applied and the quantum state is:
 $$\ket{\psi} = \frac{1}{\sqrt{2}}(\ket{00} + \ket{11})$$
-This state is an example of entanglement, a unique quantum phenomenon where the states of two or more qubits become correlated such that the state of one qubit cannot be described independently of the state of the other qubit(s). For instance, in the entangled state above, measuring the first qubit allows one to infer the state of the second qubit.
+The measurements can be performed relative to any basis in the qubit's vector space. Commonly, measurements are performed in the same basis as that is used to describe the qubits.
+
+This state is an example of entanglement, a unique quantum phenomenon where the states of two or more qubits become correlated such that the state of one qubit cannot be described independently of the state of the other qubit(s). For example, in the entangled state above, if one were to measure the first qubit to be in the state $\ket{0}$, that necessarily requires the second qubit to also be in the state $\ket{0}$. 
+
+The measurement of one of the entangled qubits has collapsed the superposition for both qubits. This surprising result was initially deemed unphysical on the grounds that it violates local realism by Einstein, Poldowsky, and Rosen, the first to describe this behaviour\cite{epr_paradox}. Nevertheless, quantum entanglement and its implications have been repeatedly verified through experimentally violating Bell's inequality, establishing that the correlations produced from quantum entanglement cannot be explained by local hidden variables.\todo{citation here for Bell's inequality and experiments violating it}
 
 These correlations are fundamental to quantum algorithms. Without entanglement, quantum computers could be efficiently simulated by classical computers, negating any advantage.
 
@@ -49,7 +58,7 @@ These correlations are fundamental to quantum algorithms. Without entanglement, 
 
 Quantum algorithms seek to leverage properties of qubits and quantum gates to solve specific problems more efficiently than classical algorithms. Notable examples include Shor's algorithm for integer factorization\cite{Shor_algorithm}, which runs exponentially faster than the best-known classical algorithms, and Grover's algorithm for unstructured search\cite{grover_search}, which provides a quadratic speedup over classical search algorithms.
 
-Large, universal, fault-tolerant quantum computers that can run these algorithms at useful scales will require millions of qubits. While researchers have made significant progress in error correction, coherence times, qubit connectivity, and gate fidelities, fault tolerant quantum computing may take decades to achieve. In the meantime, Noisy Intermediate-Scale Quantum (NISQ) computers already exist, and can run small-scale quantum algorithms that can provide insights into quantum behavior and inform the development of larger systems.
+Large, universal, fault-tolerant quantum computers that can run these algorithms at useful scales will require large numbers of qubits. While researchers have made significant progress in error correction, coherence times, qubit connectivity, and gate fidelities, fault tolerant quantum computing may take decades to achieve. In the meantime, Noisy Intermediate-Scale Quantum (NISQ) computers already exist, and can run small-scale quantum algorithms that can provide insights into quantum behavior and inform the development of larger systems.
 
 These NISQ devices are limited by the number of qubits, gate fidelities, and coherence times. As a result, quantum algorithms designed for NISQ devices must be efficient in terms of qubit usage and circuit depth to minimize the impact of noise and errors. 
 
@@ -57,8 +66,8 @@ Even if NISQ devices cannot solve problems faster than the best classical comput
 
 NISQ algorithms are designed to work within these low-resource constraints. These algorithms typically involve a hybrid approach, where a quantum computer is used to prepare and measure quantum states, while a classical computer optimises parameters based on the measurement results. Some examples of NISQ-era algorithms are described in the following sections.
 
-\section{Combinatorial Optimisation Problems}
-Combinatorial optimisation problems consist of a discrete set of feasible solutions, which can be represented as a set $S$, with finite order $N=|S|$. Each of the $N$ solutions $\mathbf{x} \in S$ can be represented as a vector of $n$ variables $\mathbf{x}=(x_1, x_2,...,x_n)$, where $x_j\in\{0,1,...,k-1\}$ are called the \textit{decision variables}. The solution space $S$ may contain all possible solutions of this form (of which there are $N=k^n$) or $S$ may be restricted to solutions which satisfy some constraint (such as in the case of permuation-based problems where $k=n$ and $N=n!$).\todo{own words} Each solution has an associated objective value (or cost), given by a objective function (or cost function) $f:S\rightarrow\mathbb{R}$, which gives a measure of the quality of any solution. The goal of the optimisation problem is to find the \textit{optimal solution} $\mathbf{x}^*$ that maximises (or minimises) the objective (or cost) function:
+\section{Combinatorial Optimisation Problems}\label{sec:cop}
+Combinatorial optimisation problems consist of a discrete set of feasible solutions, which can be represented as a set $S$, with finite order $N=|S|$. Each of the $N$ solutions $\mathbf{x} \in S$ can be represented as a vector of $n$ variables $\mathbf{x}=(x_1, x_2,...,x_n)$, where $x_j\in\{0,1,...,k-1\}$ are called the \textit{decision variables}. The solution space $S$ may contain all possible solutions of this form (of which there are $N=k^n$) or $S$ may be restricted to solutions which satisfy some constraint (such as in the case of permuation-based problems where $k=n$ and $N=n!$). Each solution has an associated objective value (or cost), given by a objective function (or cost function) $f:S\rightarrow\mathbb{R}$, which gives a measure of the quality of any solution. The goal of the optimisation problem is to find the \textit{optimal solution} $\mathbf{x}^*$ that maximises (or minimises) the objective (or cost) function:
 $$\mathbf{x}^* = \arg\min_{\mathbf{x} \in S} f(\mathbf{x})
 \;\text{or}\;
 \mathbf{x}^* = \arg\max_{\mathbf{x} \in S} f(\mathbf{x})$$
@@ -68,13 +77,13 @@ Combinatorial optimisation problems are often NP-hard, meaning that no known pol
 
 The main challenge in solving these problems is that they often require a near-exhaustive search of the solution space, which usually grows exponentially or super-exponentially with problem size. An example of this super-exponential growth will be present in the graph similarity problem in section \ref{graph_sim_section}.
 
-Research in sub-exponential combinatorial optimisation algorithms includes the topics of:
+Research in combinatorial optimisation algorithms showing exponential speedup includes:
 \begin{itemize}
     \item Exact algorithms that find optimal solutions for special problem instances with certain properties.\todo{Citations Here}
     \item Approximate algorithms that find solutions which are near the optimal solutions for general problem instances.
 \end{itemize}
 
-This thesis will focus on approximate algorithms.
+Approximate algorithms are the focus of this thesis.\todo{expand on this}
 
 To quantify how close a solution $\mathbf{x}_i$ is to the optimal solution, the approximation ratio $A$ is used:
 $$A_i = \frac{f(\mathbf{x}_i)}{f(\mathbf{x}^*)}$$
@@ -87,12 +96,12 @@ There is a need to distinguish between the graph similarity problem and the grap
 
 A pair of graphs $G_1$ and $G_2$ are considered isomorphic ($G_1\cong G_2$) if and only if there exists a bijection between their vertex sets such that any two vertices in $G_1$ are adjacent if and only if their corresponding vertices in $G_2$ are also adjacent. In this definition, the graphs are understood to be undirected, non-labelled, non-weighted graphs. However, isomorphism may apply to all other notions of graph by adding requirements to preserve any additional structures.
 
-The graph isomorphism problem is then the task of correctly creating the bijection (or equivalently, proving that one exists). Algorithms that solve this problem are trivially verifiable, as checking the correctness of the solution only involves checking that the vertex bijection correctly preserves the edges.
+The graph isomorphism problem is then the task of correctly creating that bijection (or equivalently, proving that one exists). Algorithms that solve this problem are trivially verifiable, as checking the correctness of the solution only involves checking that the vertex bijection correctly preserves the edges. Since the graph isomorphism problem can be posed as a 'yes-no' question on a set of inputs values, it is called a decision problem.
 
-In contrast, the graph similarity problem is the problem of calculating how close a pair of graphs are to being isomorphic. There are multiple measures of graph similarity. Some examples include:
+In contrast, the graph similarity problem is the problem of calculating how close a pair of graphs are to being isomorphic. This cannot be posed as a 'yes-no' problem, as many magnitudes of similarity must meaningfully captured. There are multiple measures of graph similarity. Some examples include:
 
 \begin{itemize}
-    \item \textit{Graph Edit Distance (GED):} Counts how many `edits' are required to transform one graph into another, where `edits' include inserting/deleting a vertex or edge, or substiting one vertex or edge with another. The lower the distance, the more similar the two graphs are.
+    \item \textit{Graph Edit Distance (GED):} Counts how many `edits' are required to transform one graph into another, where `edits' include inserting/deleting a vertex or edge, or substiting one vertex or edge with another. The lower the distance, the more similar the two graphs are.\todo{citations for each of these}
     \item \textit{Maximum Common Subgraph (MCS):} Finds the largest induced subgraph that is common to the two given graphs. The larger the subgraph, the more similar the two graphs are.
     \item \textit{Frobenius Distance:} Calculates the distance between two graphs using the difference between their adjacency matrices. The lower the distance, the more similar the two graphs are.
     \item \textit{Edge Overlap:} Finds the proportion of matching entries in the adjacency matrices of the graphs. The greater the proportion, the more similar the two graphs are.\cite{QAOA_graph_sim}
@@ -123,9 +132,9 @@ As such, the unlabelled graph similarity problem can be defined in terms of a co
 \subsection{Problem Definition}
 A formal definition for the unlabelled graph similarity problem is as follows:
 
-Let $G_1=(V_1,E_1)$ and $G_2=(V_2,E_2)$ be two finite, simple graphs with $|V_1|=|V_2|$, and considered \textit{unlabelled} in the sense that vertex identifiers carry no intrinsic meaning
+Let $G_1=(V_1,E_1)$ and $G_2=(V_2,E_2)$ be two finite, simple graphs and considered \textit{unlabelled} in the sense that vertex identifiers carry no intrinsic meaning.
 
-Let $\Pi(V_1,V_2)$ denote the set of all bijections $\pi: V_1 \to V_2$.
+Let $\Pi(V_1,V_2)$ denote the set of all maps $\pi: V_1 \to V_2$.
 
 Given a base similarity function $f:\mathcal{G}\times\mathcal{G}\to \mathbb{R}$ that compares labelled graphs from the class $\mathcal{G}$ of all finite simple graphs, the \textit{unlabelled similarity} between $G_1$ and $G_2$ is defined as
 
@@ -148,15 +157,27 @@ where $U(\mathbf{\theta})$ is a depth-restricted circuit composed of parameteris
 The objective function of the algorithm is typically expressed as the expectation value of a Hermitian operator $H$ with repect to the variational state:
 $$C(\mathbf{\theta})= \bra{\psi(\mathbf{\theta})}H\ket{\psi(\mathbf{\theta})} $$
 
-This cost function is estimated on the quantum device via repeated projective measurements in appropriate bases. A classical optimiser updates $\mathbf{\theta}$ with the aim of minimising (or maximising) $C(\mathbf{\theta})$, thus driving the quantum circuit towards a state that approximates the optimal configuration with repect to the target problem. The algorithm halts after the output from the quantum computer is `good enough' at approximating the optimal configuration.
+This cost function is estimated on the quantum device via repeated projective measurements in appropriate bases. A classical optimiser updates $\mathbf{\theta}$ with the aim of minimising (or maximising) $C(\mathbf{\theta})$, thus driving the quantum circuit towards a state that approximates the optimal configuration with repect to the target problem. The algorithm repeatedly prepares this variational quantum state, measures its expectation value, and optimises the parameters until a certain number of iterations is complete or until measurements of the quantum state have an approximation ratio sufficiently close to 1.
 
 To summarise, VQAs consist of a two-step loop: a quantum computer evolves the initial state to a final state via a PQC, then a classical computer measures the expectation value of the final state and uses this data to update the PQC. At the end of this loop, the quantum computer's output is now a good approximation of the optimal configuration.
 
-\subsection{QAOA}
-The Quantum Approximate Optimisation Algorithm (QAOA) is a subclass of VQAs designed to solve combinatorial optimsiation problems, introduced by Farhi et al. \cite{QAOA} In this formulation, the PQC is defined by alternating applications of unitaries associated with the problem instance and a mixing operation.
+\subsection{QAOA}\todo{finish this section}
+The Quantum Approximate Optimisation Algorithm (QAOA) is a subclass of VQAs designed to solve combinatorial optimsiation problems, introduced by Farhi et al. \cite{QAOA} In this formulation, the PQC is defined by alternating applications of unitaries. One is a quality mixer associated with the problem instance and the other is a mixing operation that induces interference.
 
-Define a unitary operator $U(Q,\gamma)$ which depends on an angle $\gamma$,
-$$U(Q,\gamma)=e^{i\gamma Q}$$
+The quantum state begins in the equal superposition state over the computational basis states:
+$$\ket{s}=\frac{1}{\sqrt{2^n}}\sum_{z}\ket{z}$$
+where $n$ is the number of qubits.
+
+Define a unitary operator $U(\gamma)$ which depends on: an angle $\gamma$, which lies between 0 and $2\pi$; and a quality operator $Q$, which is a diagonal operator that contains the objective function value for each solution.
+$$U(\gamma)=e^{i\gamma Q}$$
+Define operator $U(\beta)$ which depends on the parameter $\beta$, which lies between 0 and $\pi$.
+$$U(\beta)=\Pi_{j=1}^{n} e^{-i\beta \sigma_j^x}$$
+Here, $\sigma_j^x$ denotes the $j$th Pauli X operator.\todo{that doesn't seem right}
+
+Now, for any integer $p\geq1$, and $2p$ angles $\mathbf{\gamma}=(\gamma_1, ...,\gamma_p)$ and $\mathbf{\beta}=(\beta_1, ...,\beta_p)$ we define the final quantum state:
+$$\ket{\mathbf{\gamma},\mathbf{\beta}}=U(\beta_p)U(\gamma_p)\dots U(\beta_1)U(\gamma_1) \ket{s}$$
+
+We can now do the usual VQA method of measuring the expectation value, optimising the parameters $\mathbf{\gamma}$ and $\mathbf{\beta}$, and repeating to obtain good approximations of the optimal solution.
 
 
 
@@ -165,5 +186,42 @@ Although VQAs are a promising platform for NISQ computing, their effective perfo
 
 Therefore, it can be argued that VQAs replace one difficult optimisation problem with another difficult optimisation problem.
 
-\section{Quantum Walk-based Optimisation}
-The NVQWOA 
+\section{Non-Variational Quantum Walk-based Optimisation Algorithm}
+\subsection{Overview}
+The NVQWOA is a novel algorithm introduced by Bennett et al. that builds upon and addresses the variational challenges of the QAOA\cite{bennett2024nonvariational,bennett2024analysisnonvariationalquantumwalkbased}. 
+Like the QAOA, it alternates between applying two unitaries: a phase-separation unitary that encodes the objective function into the complex phase of the states and a mixing unitary that induces quantum interference between the solutions. Unlike QAOA or other VQAs, the parameters defining the unitaries are not variationally tuned by a classical optimiser. Instead, they are predetermined by the choice of only three hyperparameters $\gamma, t, \beta$.
+
+Simulations have demonstrated that this non-variational approach yields rapid convergence to global optima across diverse problem types, including MaxCut, maximum independent set, k-means clustering, capacitated facility location, and the quadratic assignment problem, using only modest circuit depths and a handful of iterations \cite{bennett2024analysisnonvariationalquantumwalkbased}.
+
+\subsection{Algorithm Description}
+Using the terms and definitions of combinatorial optimisation problems from Section \ref{sec:cop}:
+
+It begins with an initial superposition over the possible solution states:
+$$\ket{s}=\frac{1}{\sqrt{N}}\sum_{\mathbf{x}\in S}\ket{\mathbf{x}}$$
+
+Each iteration of the NVQWOA applies two unitaries:
+$$U_Q(\gamma)=e^{-i\gamma Q},\;\;U_M(t)=e^{-itA}$$
+where $Q$ is a diagonal operator such that $Q\ket{\mathbf{x}}=f(\mathbf{x})\ket{\mathbf{x}}$ encodes the objective function values, and $A$ is the adjacency matrix of a mixing graph whose vertices correspond with feasible solutions.
+
+The phase-separation unitary applies a phase proportional to the objective function $f(\mathbf{x})$, while the mixing unitary $U_M(t)$ implements a continuous time quantum walk (CTQW) on the mixing graph, redistributing complex amplitudes across neighbouring solutions. Repeated alternation of these unitaries produces a designed interference process in which amplitudes associated with optimal or near-optimal solutions interfere constructively, amplifying their measurement probabilities.
+
+The final quantum state after $p$ iterations of each unitary is
+$$\ket{\gamma,t,\beta}=\left[\prod_{i=0}^{p-1} U_M(t_i)U_Q\left(\frac{\pm \gamma_i}{\sigma}\right)\right] \ket{s}$$
+where the $\pm$ accounts for whether the goal is minimisation ($-$) or maximisation ($+$), $\sigma$ is the standard deviation of the objective function values (which can be efficiently approximated through random sampling), $t_i$ and $\gamma_i$ are obtained from specific formulae in terms of $\gamma, t,$ and $\beta$ and where $\gamma>0, t>0,$ and $0<\beta<1$:
+$$\gamma_i=\left(\beta + (1-\beta)\frac{i}{p-1} \right)\gamma,\;\;t_i=\left(1- (1-\beta)\frac{i}{p-1} \right)t$$
+So the angles $\gamma_i$ increase linearly with $i$ and the mixing times $t_i$ decrease linearly with $i$.
+
+\subsection{Mixing Unitary}
+A key conceptual advance of the NVQWOA lies in the explicit construction of a problem-structured mixing graph. The vertices of the graph represent feasible solutions, and edges connect nearest neighbour configurations, typically those separated by a minimal Hamming distance or by a single elementary move. The resulting adjacency matrix $A$ defines a sparse, vertex-transitive graph whose degree $d$ is polynomial in problem size.
+
+In his work, Bennett provides some examples of mixing graphs with known efficient implementations on a quantum computer:\todo{do I cite it again here?}
+
+\textit{Binary Mixer}: For problems with $n$ binary decision variables $x_j\in\{0,1\}$, the mixing graph is a $n$-dimensional hypercube, which is identical to the transverse-field Hamiltionian from the QAOA. Solutions are connected to the $n$ other solutions which differ by one bit-flip.
+
+\textit{Integer Mixer}: For problems with $n$ integer decision variables $x_j\in\{0,1,...k-1\}$. Solutions are connected to the $n(k-1)$ other solutions which differ in the choice of one decision variable.
+
+\textit{Permutation Mixer}: For problems with $n$ integer decision variables $x_j\in\{0,1,...k-1\}$ where the solutions are constrained to not have repeated decision variables. Solutions are connected to the $\frac{1}{2}n(n-1)$ other solutions which are transpositions of each other.
+
+The choice of mixing graph directly determines how probability amplitudes are propagated, making it possible to exploit problem structure, unlike Grover's diffusion operator or the complete-graph mixer, which treat all states as equally connected.\todo{citations}
+
+Now talk about subshells in the mixing graph
