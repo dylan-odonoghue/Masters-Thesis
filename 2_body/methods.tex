@@ -59,12 +59,32 @@ Optimisation of the NVQWOA hyperparameters was done in QuOp during the NVQWOA si
 \subsection{Amplification Analysis}
 We started the analysis of the NVQWOA by considering one pair of graphs at a time, and verifying that amplification is correctly applied to the optimal and near-optimal solutions.
 
+For each of $n=8,9,10,$ the probability distribution for the different solutions was compared before and after the algorithm was applied. We expected that solutions with high similarity would be more likely to be measured after the algorithm was applied. Additionally, the probability to measure the optimal solution was calculated.
+
 We later expanded this analysis to problem sets with 30 distinct problem instances.
 
-\subsection{Mean Hamming Distance Analysis}
+\subsection{Solution Distance Analysis}
+To supplement the verification of amplification, it is useful to obtain statistics on the distance between solutions. This is because we expect that near-optimal solutions, which will have a low distance to the optimal solutions, should be amplified more than other solutions, which have a greater distance to the optimal solutions.
 
-\subsection{Mixer Subshell Analysis}
-Choose either hamming or subshell, whichever is working.
+There are two useful notions of distance between solutions: subshell distance and Hamming distance, which are defined and explained below.
+
+\subsubsection{Subshell Distance}
+In this thesis, we use the term subshell distance to refer to the minimum distance on the mixing graph between a solution and an optimal solution. The term subshell in this notion of distance comes from the description in section \ref{sec:subshell}, and is used to distinguish this distance measure from other approaches. The mixer we are using is the permutation mixer, so the subshell distance is defined as:
+$$\text{SD}(\mathbf{x}^1,\mathbf{x}^2)=\min \{m\in \mathbb{N}_0: \exists \tau_1,...,\tau_m \in \mathcal{T} \text{ with } \tau_m ... \tau_1 \mathbf{x}^2 = \mathbf{x}^1\}$$
+where $\mathcal{T}=\{(ij):1 \leq i \leq j \leq n \}$ is the set of all transpositions in the symmetric group $S_n$ and transpositions act by reindexing coordinates. For this analysis $\mathbf{x}^1$ is always an optimal solution. If there were multiple optimal solutions, the subshell distance from each optimal solution was found and the minimum value was used.
+
+Subshell distance is a useful metric in the analysis because it directly represents how close the solutions are to each other on the mixing graph. By analysing how amplification is applied to solutions depending on their subshell distance, we can observe how probability is being moved by the mixing process. Additionally, if one were to perform a local search after finding a near-optimal solution, it would likely be a search of solutions with low subshell distance to the found solution, to limit the search space.
+
+\subsubsection{Hamming Distance}
+Hamming distance is a simple yet powerful and highly interpretable measure for comparing objects. It measures the number of different decision variables for a solution. The Hamming distance for two solutions is defined as 
+$$\text{HD}(\mathbf{x}^1,\mathbf{x}^2)=\sum_{i=0}^n \delta(x^1_i,x^2_i)$$
+where $\delta$ is 1 if $x^1_i\neq x^2_i$ and 0 otherwise. For this analysis $\mathbf{x}^1$ is always an optimal solution. If there were multiple optimal solutions, the Hamming distance from each optimal solution was found and the minimum value was used.
+
+Hamming distance is a useful metric in the analysis because it gives a measure of distance that is not related to the structure of the algorithm and can be easily compared to other combinatorial optimisation problems and algorithms.
+
+\subsection{Mixer Analysis}
+Using the notion of subshell distance, we can characterise the suitability of this mixer to the problem of graph similarity. 
+
 
 \subsection{Hyperparameter Analysis}
 The hyperparameters were selected by the optimisation procedure outlined in section \ref{sec:parameters}, beginning with the initial parameters $\gamma=1, t=0.2, \beta=0.8$. These were chosen as the initial parameters by rounding an initial run of numerical optimised parameters to one significant figure.

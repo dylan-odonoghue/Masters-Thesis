@@ -212,9 +212,11 @@ $$\gamma_i=\left(\beta + (1-\beta)\frac{i}{p-1} \right)\gamma,\;\;t_i=\left(1- (
 So the angles $\gamma_i$ increase linearly with $i$ and the mixing times $t_i$ decrease linearly with $i$.
 
 \subsection{Mixing Unitary}
-A key conceptual advance of the NVQWOA lies in the explicit construction of a problem-structured mixing graph. The vertices of the graph represent feasible solutions, and edges connect nearest neighbour configurations, typically those separated by a minimal Hamming distance or by a single elementary move. The resulting adjacency matrix $A$ defines a sparse, vertex-transitive graph whose degree $d$ is polynomial in problem size.
+A key conceptual advance of the NVQWOA lies in the explicit construction of a problem-structured mixing graph (also referred to as mixing unitary or mixer). The vertices of the graph represent feasible solutions, and edges connect nearest neighbour configurations, typically those separated by a minimal Hamming distance or by a single elementary move. The resulting adjacency matrix $A$ defines a sparse, vertex-transitive graph whose degree $d$ is polynomial in problem size.
 
-In his work, Bennett provides some examples of mixing graphs with known efficient implementations on a quantum computer:\todo{do I cite it again here?}
+\subsubsection{Mixer Examples}
+
+In his work, Bennett provides some examples of mixing graphs with known efficient implementations on a quantum computer \cite{bennett2024nonvariational,bennett2024analysisnonvariationalquantumwalkbased}:
 
 \textit{Binary Mixer}: For problems with $n$ binary decision variables $x_j\in\{0,1\}$, the mixing graph is a $n$-dimensional hypercube, which is identical to the transverse-field Hamiltionian from the QAOA. Solutions are connected to the $n$ other solutions which differ by one bit-flip.
 
@@ -224,6 +226,7 @@ In his work, Bennett provides some examples of mixing graphs with known efficien
 
 The choice of mixing graph directly determines how probability amplitudes are propagated, making it possible to exploit problem structure, unlike Grover's diffusion operator or the complete-graph mixer, which treat all states as equally connected.\todo{citations}
 
+\subsubsection{Mixer Subshells}\label{sec:subshell}
 An important part of the structure of mixing graphs are the stabiliser orbits, or subshells.
 
 The distance $d(u,v)$ between two vertices $u,v$ on a graph is the minimum length of the paths connecting them. A subshell is a subset of the vertices of the mixing graph, defined in relation to a reference vertex. The subshell $h_k$ contains all vertices that are a distance $k$ away from the reference vertex. The set of all subshells for a graph form equivalence classes on the set of the vertices of the graph.
