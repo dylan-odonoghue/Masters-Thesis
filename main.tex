@@ -3,23 +3,23 @@
 \input{1_header/packages.tex}
 
 \begin{document}
+\pagenumbering{roman}
 \input{1_header/title.tex}
 \restoregeometry
 
-\section*{Acknowledgments}
+\chapter*{Acknowledgments}
+\addcontentsline{toc}{chapter}{Acknowledgments}
 \input{1_header/acknowledgments.tex}
 \pagebreak
 
-\section*{Declaration}
+\chapter*{Declaration}
+\addcontentsline{toc}{chapter}{Declaration}
 \input{1_header/declaration.tex}
 \pagebreak
 
-\section*{Summary of Student Achievement}
+\chapter*{Summary of Student Achievement}
+\addcontentsline{toc}{chapter}{Summary of Student Achievement}
 \input{1_header/studentachievement.tex}
-\pagebreak
-
-\setcounter{tocdepth}{5}
-\tableofcontents
 \pagebreak
 
 \listoffigures
@@ -28,11 +28,18 @@
 
 \justify
 
-\section*{Abstract}
+\chapter*{Abstract}
+\addcontentsline{toc}{chapter}{Abstract}
 \input{1_header/abstract.tex}
 \pagebreak
 \printglossaries
 
+\setcounter{tocdepth}{5}
+\tableofcontents
+\pagebreak
+
+\setcounter{page}{0}
+\pagenumbering{arabic}
 \chapter{Introduction}
 \input{2_body/introduction.tex}
 

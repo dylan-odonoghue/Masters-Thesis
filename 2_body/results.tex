@@ -1,44 +1,52 @@
 \begin{figure}
-\centering
-\begin{subfigure}{0.45\textwidth}
-    \centering
-    \includegraphics[width=\textwidth]{Figs/n=10_graph_1.png}
-    \caption{Graph 1}
-\end{subfigure}
-\hfill
-\begin{subfigure}{0.45\textwidth}
-    \centering
-    \includegraphics[width=\textwidth]{Figs/n=10_graph_2.png}
-    \caption{Graph 2}
-\end{subfigure}
-\caption{The two graphs used in the first $n=10$ simulation.}
-\label{fig:graphs}
+     \centering
+     \begin{subfigure}{0.45\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{n=8_prob_optimal_box.png}
+         \caption{$n=8$}
+         \label{fig:osp 8}
+     \end{subfigure}
+     \hfill
+     \begin{subfigure}{0.45\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{n=9_prob_optimal_box.png}
+         \caption{$n=9$}
+         \label{fig:osp 9}
+     \end{subfigure}
+     \hfill
+     \begin{subfigure}{\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{n=10_prob_optimal_box.png}
+         \caption{$n=10$}
+         \label{fig:osp 10}
+     \end{subfigure}
+        \caption{Optimal solution probability (OSP) distributions}
+        \label{fig:osp}
 \end{figure}
 
-\begin{figure}
-\centering
-\includegraphics[width=0.75\textwidth]{Figs/n=10_Similarity_scores.png}
-\caption{The initial and final probability distributions over similarity scores after 5 iterations for the $n=10$ case.}
-\label{fig:similarity_scores}
-\end{figure}
 
 \begin{figure}
-\centering
-\includegraphics[width=0.75\textwidth]{Figs/avg_hamming_distance_comparison.png}
-\caption{$n=10$}
-\label{fig:all_hams}
-\end{figure}
-
-\begin{figure}
-\centering
-\includegraphics[width=0.75\textwidth]{Figs/hamming_distance_improvement_boxplot.png}
-\caption{Improvement in mean hamming distancec $n=10$}
-\label{fig:ham_improvement}
-\end{figure}
-
-\begin{figure}
-\centering
-\includegraphics[width=0.75\textwidth]{Figs/amplification_vs_hamming_distance.png}
-\caption{$n=10$}
-\label{fig:ham_amplification}
+     \centering
+     \begin{subfigure}{0.45\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{n=8_amplification_vs_subshell_distance.png}
+         \caption{$n=8$}
+         \label{fig:amp vs sub 8}
+     \end{subfigure}
+     \hfill
+     \begin{subfigure}{0.45\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{n=9_amplification_vs_subshell_distance.png}
+         \caption{$n=9$}
+         \label{fig:amp vs sub 9}
+     \end{subfigure}
+     \hfill
+     \begin{subfigure}{\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{n=10_amplification_vs_subshell_distance.png}
+         \caption{$n=10$}
+         \label{fig:amp vs sub 10}
+     \end{subfigure}
+        \caption{Mean amplification applied to each solution grouped by their distance from the optimal solution.}
+        \label{fig:amp vs sub}
 \end{figure}

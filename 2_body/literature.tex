@@ -96,9 +96,9 @@ There is a need to distinguish between the graph similarity problem and the grap
 
 A pair of graphs $G_1$ and $G_2$ are considered isomorphic ($G_1\cong G_2$) if and only if there exists a bijection between their vertex sets such that any two vertices in $G_1$ are adjacent if and only if their corresponding vertices in $G_2$ are also adjacent. In this definition, the graphs are understood to be undirected, non-labelled, non-weighted graphs. However, isomorphism may apply to all other notions of graph by adding requirements to preserve any additional structures.
 
-The graph isomorphism problem is then the task of correctly creating that bijection (or equivalently, proving that one exists). Algorithms that solve this problem are trivially verifiable, as checking the correctness of the solution only involves checking that the vertex bijection correctly preserves the edges. Since the graph isomorphism problem can be posed as a 'yes-no' question on a set of inputs values, it is called a decision problem.
+The graph isomorphism problem is then the task of correctly creating that bijection (or equivalently, proving that one exists). Algorithms that solve this problem are trivially verifiable, as checking the correctness of the solution only involves checking that the vertex bijection correctly preserves the edges. Since the graph isomorphism problem can be posed as a `yes-no' question on a set of inputs values, it is called a decision problem.
 
-In contrast, the graph similarity problem is the problem of calculating how close a pair of graphs are to being isomorphic. This cannot be posed as a 'yes-no' problem, as many magnitudes of similarity must meaningfully captured. There are multiple measures of graph similarity. Some examples include:
+In contrast, the graph similarity problem is the problem of calculating how close a pair of graphs are to being isomorphic. This cannot be posed as a `yes-no' problem, as many magnitudes of similarity must meaningfully captured. There are multiple measures of graph similarity. Some examples include:
 
 \begin{itemize}
     \item \textit{Graph Edit Distance (GED):} Counts how many `edits' are required to transform one graph into another, where `edits' include inserting/deleting a vertex or edge, or substiting one vertex or edge with another. The lower the distance, the more similar the two graphs are.\todo{citations for each of these}
@@ -224,4 +224,7 @@ In his work, Bennett provides some examples of mixing graphs with known efficien
 
 The choice of mixing graph directly determines how probability amplitudes are propagated, making it possible to exploit problem structure, unlike Grover's diffusion operator or the complete-graph mixer, which treat all states as equally connected.\todo{citations}
 
-Now talk about subshells in the mixing graph
+An important part of the structure of mixing graphs are the stabiliser orbits, or subshells.
+
+The distance $d(u,v)$ between two vertices $u,v$ on a graph is the minimum length of the paths connecting them. A subshell is a subset of the vertices of the mixing graph, defined in relation to a reference vertex. The subshell $h_k$ contains all vertices that are a distance $k$ away from the reference vertex. The set of all subshells for a graph form equivalence classes on the set of the vertices of the graph.
+
