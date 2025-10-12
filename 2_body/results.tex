@@ -5,14 +5,14 @@ Figure \ref{fig:similarity dist} is a grid of plots showing the probability to m
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=\textwidth]{similarity_distributions_multiple.png} 
-    \caption{Probability distributions for different objectives and sizes}
+    \caption{Probability distributions over the possible similarities, demonstrating numerical support for amplification of optimal and near-optimal solutions. 30 problem instances of randomly generated ER graphs with probability of edge inclusion 0.5, with $p=10$ iterations of the NVQWOA applied.}
     \label{fig:similarity dist}
 \end{figure}
 
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=\textwidth]{log_similarity_distributions_multiple.png} 
-    \caption{Log probability distributions for different objectives and sizes}
+    \caption{Depicts the same distributions as Fig \ref{fig:similarity dist} with a logarithmic y-axis.}
     \label{fig:similarity log dist}
 \end{figure}
 
@@ -20,7 +20,7 @@ Figure \ref{fig:osp} is a boxplot showing the probability of measuring the optim
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=\textwidth]{OSP_boxplot_multiple.png} 
-    \caption{Optimal solution probability (OSP) distributions}
+    \caption{Optimal solution probability (OSP) distributions. The average upper bound represents the mean OSP over all problem instances after optimising the hyperparameters to maximise the OSP.}
     \label{fig:osp}
 \end{figure}
 
@@ -28,7 +28,7 @@ Figure \ref{fig:osp} is a boxplot showing the probability of measuring the optim
 
 \section{Hamming Distance Analysis}
 
-Figure \ref{fig:avg ham} shows the mean Hamming distance for each problem instance.
+Figure \ref{fig:avg ham} shows the mean Hamming distance before and after amplification for each problem instance.
 \begin{figure}[htbp]
      \centering
      \begin{subfigure}{0.45\textwidth}
@@ -59,7 +59,7 @@ Figure \ref{fig:ham improvement} shows the difference in Hamming distance betwee
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=\textwidth]{hamming_improvement_boxplot_multiple.png}
-    \caption{Improvement in Hamming distance boxplot.}
+    \caption{Improvement in Hamming distance. This shows the change in expected Hamming distance after applying the NVQWOA for $p=10$ iterations.}
     \label{fig:ham improvement}
 \end{figure}
 
@@ -138,8 +138,8 @@ Lower variance indicates more phase-coherence within the shell, and therefore mo
 \section{Hyperparameter Analysis}
 Table of mean parameters:
 
-\begin{tabular}{c|c|c|c}
-    $n=8$          & $\beta$ & $\gamma$ & $t$     \\\hline
+\begin{tabular}{c||c|c|c}
+    $n=8$          & $\beta$ & $\gamma$ & $t$     \\\hline\hline
     Expected Value & 1.4(6)  & 0.20(4)  & 0.47(6) \\\hline
     OSP            & 0.79(5) & 1.00(4)  & 0.180(7)\\\hline
     CVaR           & 0.54(5) & 1.2(1)   & 0.17(1) 
