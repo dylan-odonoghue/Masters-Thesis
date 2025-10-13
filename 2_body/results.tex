@@ -1,7 +1,14 @@
-Trials were successfully conducted for the NVQWOA on graph similarity problems of size $n=8,9,10$. Each set of graph sizes had 30 distinct problem instances, and each problem instance was simulated with $p=10$ iterations for hyperparameter optimisation of the expected value, the optimal solution probability (OSP), and the conditional value at risk (CVaR). The results of these trials are presented in this chapter.
+We classically simulated the NVQWOA on randomly generated unlabelled graph similarity instances of size $n=8,9,10$. Each size included 30 distinct problem instances, and each was evolved for $p=10$ iterations under hyperparameters optimised for three objective functions. Across all analyses, we observed consistent amplification of optimal and near-optimal solutions, strong correlation between amplification and solution proximity to the optimum, and mixing dynamics that align with theoretical predictions for suitability. These results provide strong evidence that NVQWOA effectively explores the solution space of the graph similarity problem and concentrates probability in regions of high similarity.
+
+STRATEGY:
+First say the purpose, Second the major trends and observations, Third any key results to quantify, Fourth explain why it matters without going discussion mode.
 
 \section{Amplification Analysis}
-Figure \ref{fig:similarity dist} is a grid of plots showing the probability to measure solutions according to their similarity scores. Figure \ref{fig:similarity log dist} depicts the same values but with a log-scale y axis.
+The first analysis aimed to verify that the NVQWOA amplifies the measurement probability of optimal and near-optimal solutions relative to the uniform initial state distribution. 
+
+Figures \ref{fig:similarity dist} and \ref{fig:similarity log dist} show the average probability distributions over the possible similarity scores, using a linear probability scale for Figure \ref{fig:similarity dist} and a log probability scale for \ref{fig:similarity log dist}. The post-amplification distributions are skewed towards higher-similarity solutions compared to the initial uniform distribution.
+
+
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=\textwidth]{similarity_distributions_multiple.png} 
@@ -16,7 +23,8 @@ Figure \ref{fig:similarity dist} is a grid of plots showing the probability to m
     \label{fig:similarity log dist}
 \end{figure}
 
-Figure \ref{fig:osp} is a boxplot showing the probability of measuring the optimal solution (OSP) after amplification.
+Figure \ref{fig:osp} is a boxplot showing the probability of measuring the optimal solution (OSP) after amplification. The OSP varied significantly across problem instances but consistently improved following NVQWOA evolution. Median OSP values increased by more than an order of magnitude over the initial probability when using the expected value as the objective function. When
+
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=\textwidth]{OSP_boxplot_multiple.png} 
@@ -27,6 +35,7 @@ Figure \ref{fig:osp} is a boxplot showing the probability of measuring the optim
 
 
 \section{Hamming Distance Analysis}
+We next analysed the Hamming distance between each solution and the optimal solution(s) to determine whether amplification favours solutions close to the optimum in the solution space.
 
 Figure \ref{fig:avg ham} shows the mean Hamming distance before and after amplification for each problem instance.
 \begin{figure}[htbp]
@@ -55,7 +64,7 @@ Figure \ref{fig:avg ham} shows the mean Hamming distance before and after amplif
         \label{fig:avg ham}
 \end{figure}
 
-Figure \ref{fig:ham improvement} shows the difference in Hamming distance between the initial distribution and after amplification.
+As shown in Figure \ref{fig:ham improvement}, the mean Hamming distance decreased significantly after amplification, with X and Y and Z as the average reductions.
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=\textwidth]{hamming_improvement_boxplot_multiple.png}
@@ -63,7 +72,7 @@ Figure \ref{fig:ham improvement} shows the difference in Hamming distance betwee
     \label{fig:ham improvement}
 \end{figure}
 
-Figure \ref{fig:amp vs ham} shows how much amplification was applied to each solution based on their Hamming distance.
+Figure \ref{fig:amp vs ham} shows how much amplification was applied to each solution based on their Hamming distance. The optimal solutions received average amplifications of X,Y and Z. Unexpectedly, solutions with a Hamming distance appear to have been amplified a small amount as well, receiving on average A,B, and C.
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=\textwidth]{amplification_vs_hamming_multiple.png}
@@ -74,6 +83,7 @@ Figure \ref{fig:amp vs ham} shows how much amplification was applied to each sol
 
 
 \section{Subshell Distance Analysis}
+We also analysed the subshell distance between each solution and the optimal solution(s), which directly reflects the structure of the permutation mixer and the connectivity of the mixing graph.
 
 Figure \ref{fig:avg sub} depicts the average subshell distance before and after amplification for each problem instance.
 \begin{figure}[htbp]
@@ -110,7 +120,7 @@ Figure \ref{fig:sub improvement} shows the difference in mean subshell distance 
     \label{fig:sub improvement}
 \end{figure}
 
-Figure \ref{fig:amp vs sub} shows how much amplification was applied to each solution based on their subshell distance.
+Figure \ref{fig:amp vs sub} shows how much amplification was applied to each solution based on their subshell distance. These plots are monotonically decreasing. 
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=\textwidth]{amplification_vs_subshell_multiple.png}
@@ -118,7 +128,7 @@ Figure \ref{fig:amp vs sub} shows how much amplification was applied to each sol
     \label{fig:amp vs sub}
 \end{figure}
 
-Figure \ref{fig:mqg} shows the mean quality gap between the optimal solutions and the subshells. Mention accounting for cases with $n-2$ possible shell distances. And the fact that being monotonically increasing is a good thing.
+Figure \ref{fig:mqg} shows the mean quality gap between the optimal solutions and the subshells. For all problem instances, the mean quality gap was a monotonically increasing function with subshell distance.
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=\textwidth]{mean_quality_gap_vs_subshell_distance.png}
@@ -127,7 +137,7 @@ Figure \ref{fig:mqg} shows the mean quality gap between the optimal solutions an
 \end{figure}
 
 Figure \ref{fig:shell variance} shows the amount of variance in the objective values for each subshell.
-Lower variance indicates more phase-coherence within the shell, and therefore more potential for constructive interference with the target solution under optimisation of $t$ and $\gamma$.
+Lower variance indicates more phase-coherence within the shell, and therefore more potential for constructive interference with the target solution under optimisation of $t$ and $\gamma$. The maximum subshell variance was X, for subshell $h$ in problem $k$.\todo{find max variance}
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=\textwidth]{subshell_variance_multiple.png}
@@ -136,7 +146,13 @@ Lower variance indicates more phase-coherence within the shell, and therefore mo
 \end{figure}
 
 \section{Hyperparameter Analysis}
-Table of mean parameters:
+We optimised the three NVQWOA hyperparameters $\beta, \gamma, t$ under three different objective functions applied to the final state: the expected value, the probability of measuring an optimal solution (OSP), and the conditional value at risk (CVaR).
+
+The optimal values for $t$ decreased with system size for all objective functions. The optimal values for $\gamma$ remained constant. The optimal values for $\beta$ went on a walkabout.
+
+The optimal values for the hyperparameters were distinct for each objective function across all problem instances.
+
+Table of mean hyperparameters:
 
 \begin{tabular}{c||c|c|c}
     $n=8$          & $\beta$ & $\gamma$ & $t$     \\\hline\hline
