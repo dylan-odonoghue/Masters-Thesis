@@ -172,38 +172,36 @@ Define a unitary operator $U(\gamma)$ which depends on: an angle $\gamma$, which
 $$U(\gamma)=e^{i\gamma Q}$$
 Define operator $U(\beta)$ which depends on the parameter $\beta$, which lies between 0 and $\pi$.
 $$U(\beta)=\Pi_{j=1}^{n} e^{-i\beta \sigma_j^x}$$
-Here, $\sigma_j^x$ denotes the $j$th Pauli X operator.\todo{that doesn't seem right}
+Here, $\sigma_j^x$ denotes the Pauli X operator applied to the $j$ register. This is the mixing unitary, which induces interference between related solutions. Other mixers are introduced for use in the NVQWOA in section \ref{sec:NVQWOA}.
 
 Now, for any integer $p\geq1$, and $2p$ angles $\mathbf{\gamma}=(\gamma_1, ...,\gamma_p)$ and $\mathbf{\beta}=(\beta_1, ...,\beta_p)$ we define the final quantum state:
 $$\ket{\mathbf{\gamma},\mathbf{\beta}}=U(\beta_p)U(\gamma_p)\dots U(\beta_1)U(\gamma_1) \ket{s}$$
 
 We can now do the usual VQA method of measuring the expectation value, optimising the parameters $\mathbf{\gamma}$ and $\mathbf{\beta}$, and repeating to obtain good approximations of the optimal solution.
 
-
-
 \subsection{Challenges}
 Although VQAs are a promising platform for NISQ computing, their effective performance relies on the computationally expensive tuning of an often prohibitively large number of variational parameters. Additionally, the performance of these variational algorithms is highly dependent on the initialisation of the variational parameters.
 
 Therefore, it can be argued that VQAs replace one difficult optimisation problem with another difficult optimisation problem.
 
-\section{Non-Variational Quantum Walk-based Optimisation Algorithm}
+\section{Non-Variational Quantum Walk-based Optimisation Algorithm}\label{sec:NVQWOA}
 \subsection{Overview}
 The NVQWOA is a novel algorithm introduced by Bennett et al. that builds upon and addresses the variational challenges of the QAOA\cite{bennett2024nonvariational,bennett2024analysisnonvariationalquantumwalkbased}. 
-Like the QAOA, it alternates between applying two unitaries: a phase-separation unitary that encodes the objective function into the complex phase of the states and a mixing unitary that induces quantum interference between the solutions. Unlike QAOA or other VQAs, the parameters defining the unitaries are not variationally tuned by a classical optimiser. Instead, they are predetermined by the choice of only three hyperparameters $\gamma, t, \beta$.
+Like the QAOA, it alternates between applying two unitaries: a phase-separation unitary that encodes the objective function into the complex phase of the states and a mixing unitary that induces quantum interference between the solutions. Unlike QAOA or other VQAs, the parameters defining the unitaries are not variationally tuned by a classical optimiser. Instead, they are predetermined by the choice of only three hyperparameters $\gamma, t, \beta$. Additionally, the structure of the mixer is chosen to match the structure of the problem, to connect nearest-neightbour solutions to one another.
 
 Simulations have demonstrated that this non-variational approach yields rapid convergence to global optima across diverse problem types, including MaxCut, maximum independent set, k-means clustering, capacitated facility location, and the quadratic assignment problem, using only modest circuit depths and a handful of iterations \cite{bennett2024analysisnonvariationalquantumwalkbased}.
 
 \subsection{Algorithm Description}
 Using the terms and definitions of combinatorial optimisation problems from Section \ref{sec:cop}:
 
-It begins with an initial superposition over the possible solution states:
+The algorithm begins with an initial superposition over all possible solution states:
 $$\ket{s}=\frac{1}{\sqrt{N}}\sum_{\mathbf{x}\in S}\ket{\mathbf{x}}$$
 
 Each iteration of the NVQWOA applies two unitaries:
 $$U_Q(\gamma)=e^{-i\gamma Q},\;\;U_M(t)=e^{-itA}$$
-where $Q$ is a diagonal operator such that $Q\ket{\mathbf{x}}=f(\mathbf{x})\ket{\mathbf{x}}$ encodes the objective function values, and $A$ is the adjacency matrix of a mixing graph whose vertices correspond with feasible solutions.
+where $Q$ is a diagonal operator such that $Q\ket{\mathbf{x}}=f(\mathbf{x})\ket{\mathbf{x}}$ encodes the objective function values, and $A$ is the adjacency matrix of a mixing graph whose vertices correspond with feasible solutions and whose edges connect nearest-neighbour solutions to one another.
 
-The phase-separation unitary applies a phase proportional to the objective function $f(\mathbf{x})$, while the mixing unitary $U_M(t)$ implements a continuous time quantum walk (CTQW) on the mixing graph, redistributing complex amplitudes across neighbouring solutions. Repeated alternation of these unitaries produces a designed interference process in which amplitudes associated with optimal or near-optimal solutions interfere constructively, amplifying their measurement probabilities.
+The phase-separation unitary applies a phase to each solution states, proportional to the objective value of that solution $f(\mathbf{x})$, while the mixing unitary $U_M(t)$ implements a continuous time quantum walk (CTQW) on the mixing graph, redistributing complex amplitudes through neighbouring solutions. Repeated alternating application of these unitaries produces a designed interference process in which amplitudes associated with optimal or near-optimal solutions interfere constructively, amplifying their measurement probabilities.
 
 The final quantum state after $p$ iterations of each unitary is
 $$\ket{\gamma,t,\beta}=\left[\prod_{i=0}^{p-1} U_M(t_i)U_Q\left(\frac{\pm \gamma_i}{\sigma}\right)\right] \ket{s}$$
@@ -212,7 +210,7 @@ $$\gamma_i=\left(\beta + (1-\beta)\frac{i}{p-1} \right)\gamma,\;\;t_i=\left(1- (
 So the angles $\gamma_i$ increase linearly with $i$ and the mixing times $t_i$ decrease linearly with $i$.
 
 \subsection{Mixing Unitary}
-A key conceptual advance of the NVQWOA lies in the explicit construction of a problem-structured mixing graph (also referred to as mixing unitary or mixer). The vertices of the graph represent feasible solutions, and edges connect nearest neighbour configurations, typically those separated by a minimal Hamming distance or by a single elementary move. The resulting adjacency matrix $A$ defines a sparse, vertex-transitive graph whose degree $d$ is polynomial in problem size.
+A key conceptual advance of the NVQWOA lies in the explicit construction of a problem-structured mixing graph (also referred to as mixing unitary or mixer). The vertices of the graph represent feasible solutions, and edges connect nearest neighbour configurations, typically those separated by a minimal Hamming distance or by a single elementary move. The resulting adjacency matrix $A$ defines a vertex-transitive graph whose degree $d$ is polynomial in problem size.
 
 \subsubsection{Mixer Examples}
 
@@ -227,7 +225,16 @@ In his work, Bennett provides some examples of mixing graphs with known efficien
 The choice of mixing graph directly determines how probability amplitudes are propagated, making it possible to exploit problem structure, unlike Grover's diffusion operator or the complete-graph mixer, which treat all states as equally connected.\todo{citations}
 
 \subsubsection{Mixer Subshells}\label{sec:subshell}
-An important part of the structure of mixing graphs are the stabiliser orbits, or subshells.
+The distance $dist(u,v)$ between two vertices $u,v$ on a graph is the minimum length of the paths connecting them. A subshell is a subset of the vertices of the mixing graph, defined in relation to a reference vertex $u$. The subshell $h_u$ contains all vertices that are a distance $h$ away from $u$. The set of all subshells for a graph form equivalence classes on the set of the vertices of the graph.
 
-The distance $d(u,v)$ between two vertices $u,v$ on a graph is the minimum length of the paths connecting them. A subshell is a subset of the vertices of the mixing graph, defined in relation to a reference vertex. The subshell $h_k$ contains all vertices that are a distance $k$ away from the reference vertex. The set of all subshells for a graph form equivalence classes on the set of the vertices of the graph.
+For the NVQWOA to perform well on a combinatorial optimisation problem, it is expected to satisfy two conditions. First, the action of the mixer on an arbitrary solution state $\ket{\mathbf{u}}$ must be as follows:
+$$
+U_M(t)\ket{\mathbf{u}}=\sum_{h=0}^D \left(e^{-ih\phi(t)} \sum_{\mathbf{x}\in h_{\mathbf{u}}} r_\mathbf{x}(t)\ket{\mathbf{x}} \right),
+$$
+where $D$ is the diameter of the mixing graph and (for sufficiently small $t$) $r_\mathbf{x}$ and $\phi$ are positive real-valued functions, and $0<\phi(t)<\pi$. In essence, probability amplitude from an initial vertex is distributed to other vertices such that the complex phase of the distributed probability amplitudes are proportional to their distance from the initial vertex.
 
+The second condition is that the following relationship should be at least approximately satisfied,
+$$
+(\mu_{h\mathbf{x}}-f(\mathbf{x}))\approx -m_h (f(\mathbf{x})-\mu),
+$$
+where $\mu_{h\mathbf{x}}$ is defined as the mean objective function value of solutions contained in $h_{\mathbf{x}}$, $\mu$ is the mean objective function value of all solutions in $S$, and $m_h$ is a positive constant. Also, the proportionality $m_h$ should increase monotonically with increasing $h$ (up to a distance which is a considerable fraction of the graph's diameter $D$)
