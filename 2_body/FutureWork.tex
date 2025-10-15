@@ -1,8 +1,12 @@
-\section{Graph Similarity Measures}
+\textbf{Exploration of Graph Similarity Measures}
 
-\section{Random Graph Generation}
-Exploring directed or weighted graphs
+In this thesis, we explored the use of edge overlap as a measure of graph similarity. This corresponded well with the structure of the mixing graph, as discussed in section \ref{sec:mixer discussion}. Investigation into other measures of graph similarity, such as maximum common subgraph or graph edit distance, may find that those measures yield better results.
 
-Exploring Watt-Strogatz, Barabasi-Albert graphs
+\textbf{Random Graph Generation}
 
-\section{Performance on Quantum Hardware}
+The graphs generated for analysis were simple, undirected, unweighted graphs created using the Erdős-Rényi-Gilbert random graph model\cite{erdos_renyi,gilbert}. Firstly, extending the problem to directed or weighted graphs would expand the possible applications to many practical fields where these graphs are common.
+Secondly, changing the random graph model to the Watts-Strogatz, Barabasi-Albert, or any other random graph model will change the characteristics of the problem instances, which could change the optimal hyperparameters. If the optimal hyperparameters do not significantly change depending on the structure and characteristics of the graph, this would greatly reduce the required number of shots to run the NVQWOA.
+
+\textbf{Performance on Quantum Hardware}
+
+These classical simulations were performed assuming no noise in the gates and no decoherence in the qubits. Hyperparameter optimisation was determined by objective functions that did not measure the quantum state using random shots but instead had access to the complete state vector. These assumptions, although useful for mathematical analysis as a proof of concept, are fundamentally unphysical. To improve the analysis of the NVQWOA, its real performance on quantum hardware should be calculated by simulating noise and decoherence.

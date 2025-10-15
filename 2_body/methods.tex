@@ -30,7 +30,7 @@ A drawback of using edge overlap is that it is not well-defined for graphs with 
 The choice of graph similarity measure is not expected to have a strong effect on the observed results. The vertex mappings that give strong similarity with any particular measure usually give strong similarity with most measures. For the choice of a specific graph similarity measure to affect the results, it would have to give a different problem structure which significantly alters the structure of qualities.
 
 \section{Problem Instance Construction}
-There does not exist a widely used library of graph similarity problem instances. To test the algorithm on a wide group of fairly-chosen problems, we randomly generated the graphs using the Erdős-Renyi random graph model.\todo{cite erdos renyi}
+There does not exist a widely used library of graph similarity problem instances. To test the algorithm on a wide group of fairly-chosen problems, we randomly generated the graphs using the Erdős-Rényi-Gilbert random graph model\cite{erdos_renyi,gilbert}.
 The number of nodes $n$, was varied to investigate how changing problem sizes changed the performance of the algorithm. The probability of edge inclusion was fixed at 0.5 for simplicity and repeatability.
 
 Differences in graphs were induced by copying a graph and removing $k$ edges. This allowed the upper limit of similarity to be easily known to be $\frac{n^2-2k}{n^2}$.
