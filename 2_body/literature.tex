@@ -50,24 +50,23 @@ The measurements can be performed relative to any basis in the qubit's vector sp
 
 This state is an example of entanglement, a unique quantum phenomenon where the states of two or more qubits become correlated such that the state of one qubit cannot be described independently of the state of the other qubit(s). For example, in the entangled state above, if one were to measure the first qubit to be in the state $\ket{0}$, that necessarily requires the second qubit to also be in the state $\ket{0}$. 
 
-The measurement of one of the entangled qubits has collapsed the superposition for both qubits. This surprising result was initially deemed unphysical on the grounds that it violates local realism by Einstein, Poldowsky, and Rosen, the first to describe this behaviour\cite{epr_paradox}. Nevertheless, quantum entanglement and its implications have been repeatedly verified through experimentally violating Bell's inequality, establishing that the correlations produced from quantum entanglement cannot be explained by local hidden variables.\todo{citation here for Bell's inequality and experiments violating it}
-
-These correlations are fundamental to quantum algorithms. Without entanglement, quantum computers could be efficiently simulated by classical computers, negating any advantage.
+The measurement of one of the entangled qubits has collapsed the superposition for both qubits. This surprising result was initially deemed unphysical on the grounds that it violates local realism by Einstein, Poldowsky, and Rosen, the first to describe this behaviour\cite{epr_paradox}. Nevertheless, quantum entanglement and its implications have been repeatedly verified through experimentally violating Bell's inequality\cite{bell_theorem}, establishing that the correlations produced from quantum entanglement cannot be explained by local hidden variables\cite{bell_inequality_1,bell_inequality_2,bell_inequality_3}.
+These correlations are fundamental to quantum algorithms. Without entanglement, quantum computers could be efficiently simulated by classical computers, negating any advantage\cite{Jozsa_2003}.
 
 \subsection{Quantum Algorithms and Challenges}
 
-Quantum algorithms seek to leverage properties of qubits and quantum gates to solve specific problems more efficiently than classical algorithms. Notable examples include Shor's algorithm for integer factorization\cite{Shor_algorithm}, which runs exponentially faster than the best-known classical algorithms, and Grover's algorithm for unstructured search\cite{grover_search}, which provides a quadratic speedup over classical search algorithms.
+Quantum algorithms seek to leverage properties of qubits and quantum gates to solve specific problems more efficiently than classical algorithms. Notable examples include Shor's algorithm for integer factorisation\cite{Shor_algorithm}, which runs exponentially faster than the best-known classical algorithms, and Grover's algorithm for unstructured search\cite{grover_search}, which provides a quadratic speedup over classical search algorithms.
 
-Large, universal, fault-tolerant quantum computers that can run these algorithms at useful scales will require large numbers of qubits. While researchers have made significant progress in error correction, coherence times, qubit connectivity, and gate fidelities, fault tolerant quantum computing may take decades to achieve. In the meantime, Noisy Intermediate-Scale Quantum (NISQ) computers already exist, and can run small-scale quantum algorithms that can provide insights into quantum behavior and inform the development of larger systems.
+Large, universal, fault-tolerant quantum computers that can run these algorithms at useful scales will require large numbers of qubits. While researchers have made significant progress in error correction, coherence times, qubit connectivity, and gate fidelities, fault tolerant quantum computing may take decades to achieve. In the meantime, Noisy Intermediate-Scale Quantum (NISQ) computers already exist, and can run small-scale quantum algorithms that can provide insights into quantum behaviour and inform the development of larger systems.
 
-These NISQ devices are limited by the number of qubits, gate fidelities, and coherence times. As a result, quantum algorithms designed for NISQ devices must be efficient in terms of qubit usage and circuit depth to minimize the impact of noise and errors. 
+These NISQ devices are limited by the number of qubits, gate fidelities, and coherence times. As a result, quantum algorithms designed for NISQ devices must be efficient in terms of qubit usage and circuit depth to minimise the impact of noise and errors. 
 
 Even if NISQ devices cannot solve problems faster than the best classical computers using the best classical algorithms (particularly with the emergence of exascale supercomputing), they could still provide an economic advantage by using less energy or by being lower cost to build and operate.
 
 NISQ algorithms are designed to work within these low-resource constraints. These algorithms typically involve a hybrid approach, where a quantum computer is used to prepare and measure quantum states, while a classical computer optimises parameters based on the measurement results. Some examples of NISQ-era algorithms are described in the following sections.
 
 \section{Combinatorial Optimisation Problems}\label{sec:cop}
-Combinatorial optimisation problems consist of a discrete set of feasible solutions, which can be represented as a set $S$, with finite order $N=|S|$. Each of the $N$ solutions $\mathbf{x} \in S$ can be represented as a vector of $n$ variables $\mathbf{x}=(x_1, x_2,...,x_n)$, where $x_j\in\{0,1,...,k-1\}$ are called the \textit{decision variables}. The solution space $S$ may contain all possible solutions of this form (of which there are $N=k^n$) or $S$ may be restricted to solutions which satisfy some constraint (such as in the case of permuation-based problems where $k=n$ and $N=n!$). Each solution has an associated objective value (or cost), given by a objective function (or cost function) $f:S\rightarrow\mathbb{R}$, which gives a measure of the quality of any solution. The goal of the optimisation problem is to find the \textit{optimal solution} $\mathbf{x}^*$ that maximises (or minimises) the objective (or cost) function:
+Combinatorial optimisation problems consist of a discrete set of feasible solutions, which can be represented as a set $S$, with finite order $N=|S|$. Each of the $N$ solutions $\mathbf{x} \in S$ can be represented as a vector of $n$ variables $\mathbf{x}=(x_1, x_2,...,x_n)$, where $x_j\in\{0,1,...,k-1\}$ are called the \textit{decision variables}. The solution space $S$ may contain all possible solutions of this form (of which there are $N=k^n$) or $S$ may be restricted to solutions which satisfy some constraint (such as in the case of permutation-based problems where $k=n$ and $N=n!$). Each solution has an associated objective value (or cost), given by a objective function (or cost function) $f:S\rightarrow\mathbb{R}$, which gives a measure of the quality of any solution. The goal of the optimisation problem is to find the \textit{optimal solution} $\mathbf{x}^*$ that maximises (or minimises) the objective (or cost) function:
 $$\mathbf{x}^* = \arg\min_{\mathbf{x} \in S} f(\mathbf{x})
 \;\text{or}\;
 \mathbf{x}^* = \arg\max_{\mathbf{x} \in S} f(\mathbf{x})$$
@@ -101,7 +100,7 @@ The graph isomorphism problem is then the task of correctly creating that biject
 In contrast, the graph similarity problem is the problem of calculating how close a pair of graphs are to being isomorphic. This cannot be posed as a `yes-no' problem, as many magnitudes of similarity must meaningfully captured. There are multiple measures of graph similarity. Some examples include:
 
 \begin{itemize}
-    \item \textit{Graph Edit Distance (GED):} Counts how many `edits' are required to transform one graph into another, where `edits' include inserting/deleting a vertex or edge, or substiting one vertex or edge with another. The lower the distance, the more similar the two graphs are.\todo{citations for each of these}
+    \item \textit{Graph Edit Distance (GED):} Counts how many `edits' are required to transform one graph into another, where `edits' include inserting/deleting a vertex or edge, or substituting one vertex or edge with another. The lower the distance, the more similar the two graphs are.\todo{citations for each of these}
     \item \textit{Maximum Common Subgraph (MCS):} Finds the largest induced subgraph that is common to the two given graphs. The larger the subgraph, the more similar the two graphs are.
     \item \textit{Frobenius Distance:} Calculates the distance between two graphs using the difference between their adjacency matrices. The lower the distance, the more similar the two graphs are.
     \item \textit{Edge Overlap:} Finds the proportion of matching entries in the adjacency matrices of the graphs. The greater the proportion, the more similar the two graphs are.\cite{QAOA_graph_sim}
@@ -154,15 +153,15 @@ VQAs implement a parametrised quantum circuit (PQC) whose unitary evolution is g
 $$\ket{\psi(\mathbf{\theta})}=U(\mathbf{\theta})\ket{0}^{\otimes n}$$
 where $U(\mathbf{\theta})$ is a depth-restricted circuit composed of parameterised single- and multi-qubit gates, and $n$ is the number of qubits in the input to the quantum computer. Commonly, $d=\mathcal{O}(\text{poly}(n))$, since we seek efficient circuits that are polynomial in resources. \todo{citation here.}
 
-The objective function of the algorithm is typically expressed as the expectation value of a Hermitian operator $H$ with repect to the variational state:
+The objective function of the algorithm is typically expressed as the expectation value of a Hermitian operator $H$ with respect to the variational state:
 $$C(\mathbf{\theta})= \bra{\psi(\mathbf{\theta})}H\ket{\psi(\mathbf{\theta})} $$
 
-This cost function is estimated on the quantum device via repeated projective measurements in appropriate bases. A classical optimiser updates $\mathbf{\theta}$ with the aim of minimising (or maximising) $C(\mathbf{\theta})$, thus driving the quantum circuit towards a state that approximates the optimal configuration with repect to the target problem. The algorithm repeatedly prepares this variational quantum state, measures its expectation value, and optimises the parameters until a certain number of iterations is complete or until measurements of the quantum state have an approximation ratio sufficiently close to 1.
+This cost function is estimated on the quantum device via repeated projective measurements in appropriate bases. A classical optimiser updates $\mathbf{\theta}$ with the aim of minimising (or maximising) $C(\mathbf{\theta})$, thus driving the quantum circuit towards a state that approximates the optimal configuration with respect to the target problem. The algorithm repeatedly prepares this variational quantum state, measures its expectation value, and optimises the parameters until a certain number of iterations is complete or until measurements of the quantum state have an approximation ratio sufficiently close to 1.
 
 To summarise, VQAs consist of a two-step loop: a quantum computer evolves the initial state to a final state via a PQC, then a classical computer measures the expectation value of the final state and uses this data to update the PQC. At the end of this loop, the quantum computer's output is now a good approximation of the optimal configuration.
 
 \subsection{QAOA}\todo{finish this section}
-The Quantum Approximate Optimisation Algorithm (QAOA) is a subclass of VQAs designed to solve combinatorial optimsiation problems, introduced by Farhi et al. \cite{QAOA} In this formulation, the PQC is defined by alternating applications of unitaries. One is a quality mixer associated with the problem instance and the other is a mixing operation that induces interference.
+The Quantum Approximate Optimisation Algorithm (QAOA) is a subclass of VQAs designed to solve combinatorial optimisation problems, introduced by Farhi et al. \cite{QAOA} In this formulation, the PQC is defined by alternating applications of unitaries. One is a quality mixer associated with the problem instance and the other is a mixing operation that induces interference.
 
 The quantum state begins in the equal superposition state over the computational basis states:
 $$\ket{s}=\frac{1}{\sqrt{2^n}}\sum_{z}\ket{z}$$
@@ -176,6 +175,7 @@ Here, $\sigma_j^x$ denotes the Pauli X operator applied to the $j$ register. Thi
 
 Now, for any integer $p\geq1$, and $2p$ angles $\mathbf{\gamma}=(\gamma_1, ...,\gamma_p)$ and $\mathbf{\beta}=(\beta_1, ...,\beta_p)$ we define the final quantum state:
 $$\ket{\mathbf{\gamma},\mathbf{\beta}}=U(\beta_p)U(\gamma_p)\dots U(\beta_1)U(\gamma_1) \ket{s}$$
+This quantum state is acquired by repeatedly applying $U(\gamma)$ then $U(\beta)$. The action that $U(\gamma)$ has on each individual state is to apply a local phase shift to its complex amplitude proportional to the quality of the solution represented by that state. Because this results in the phases of the solutions being separated from one another, this unitary is called the phase separation unitary. The action that $U(\beta)$ has on each individual state is equivalent to performing a quantum walk on a graph representing the connections between different states.
 
 We can now do the usual VQA method of measuring the expectation value, optimising the parameters $\mathbf{\gamma}$ and $\mathbf{\beta}$, and repeating to obtain good approximations of the optimal solution.
 
@@ -187,7 +187,7 @@ Therefore, it can be argued that VQAs replace one difficult optimisation problem
 \section{Non-Variational Quantum Walk-based Optimisation Algorithm}\label{sec:NVQWOA}
 \subsection{Overview}
 The NVQWOA is a novel algorithm introduced by Bennett et al. that builds upon and addresses the variational challenges of the QAOA\cite{bennett2024nonvariational,bennett2024analysisnonvariationalquantumwalkbased}. 
-Like the QAOA, it alternates between applying two unitaries: a phase-separation unitary that encodes the objective function into the complex phase of the states and a mixing unitary that induces quantum interference between the solutions. Unlike QAOA or other VQAs, the parameters defining the unitaries are not variationally tuned by a classical optimiser. Instead, they are predetermined by the choice of only three hyperparameters $\gamma, t, \beta$. Additionally, the structure of the mixer is chosen to match the structure of the problem, to connect nearest-neightbour solutions to one another.
+Like the QAOA, it alternates between applying two unitaries: a phase-separation unitary that encodes the objective function into the complex phase of the states and a mixing unitary that induces quantum interference between the solutions. Unlike QAOA or other VQAs, the parameters defining the unitaries are not variationally tuned by a classical optimiser. Instead, they are predetermined by the choice of only three hyperparameters $\gamma, t, \beta$. Additionally, the structure of the mixer is chosen to match the structure of the problem, to connect nearest-neighbour solutions to one another.
 
 Simulations have demonstrated that this non-variational approach yields rapid convergence to global optima across diverse problem types, including MaxCut, maximum independent set, k-means clustering, capacitated facility location, and the quadratic assignment problem, using only modest circuit depths and a handful of iterations \cite{bennett2024analysisnonvariationalquantumwalkbased}.
 
@@ -216,13 +216,13 @@ A key conceptual advance of the NVQWOA lies in the explicit construction of a pr
 
 In his work, Bennett provides some examples of mixing graphs with known efficient implementations on a quantum computer \cite{bennett2024nonvariational,bennett2024analysisnonvariationalquantumwalkbased}:
 
-\textit{Binary Mixer}: For problems with $n$ binary decision variables $x_j\in\{0,1\}$, the mixing graph is a $n$-dimensional hypercube, which is identical to the transverse-field Hamiltionian from the QAOA. Solutions are connected to the $n$ other solutions which differ by one bit-flip.
+\textit{Binary Mixer}: For problems with $n$ binary decision variables $x_j\in\{0,1\}$, the mixing graph is a $n$-dimensional hypercube, which is identical to the transverse-field Hamiltonian from the QAOA. Solutions are connected to the $n$ other solutions which differ by one bit-flip.
 
 \textit{Integer Mixer}: For problems with $n$ integer decision variables $x_j\in\{0,1,...k-1\}$. Solutions are connected to the $n(k-1)$ other solutions which differ in the choice of one decision variable.
 
 \textit{Permutation Mixer}: For problems with $n$ integer decision variables $x_j\in\{0,1,...k-1\}$ where the solutions are constrained to not have repeated decision variables. Solutions are connected to the $\frac{1}{2}n(n-1)$ other solutions which are transpositions of each other.
 
-The choice of mixing graph directly determines how probability amplitudes are propagated, making it possible to exploit problem structure, unlike Grover's diffusion operator or the complete-graph mixer, which treat all states as equally connected.\todo{citations}
+The choice of mixing graph directly determines how probability amplitudes are propagated, making it possible to exploit problem structure, unlike the transverse-Hamiltonian mixer in the QAOA, which applies the same mixer to all combinatorial optimsiation problems\cite{QAOA}.
 
 \subsubsection{Mixer Subshells}\label{sec:subshell}
 The distance $dist(u,v)$ between two vertices $u,v$ on a graph is the minimum length of the paths connecting them. A subshell is a subset of the vertices of the mixing graph, defined in relation to a reference vertex $u$. The subshell $h_u$ contains all vertices that are a distance $h$ away from $u$. The set of all subshells for a graph form equivalence classes on the set of the vertices of the graph.

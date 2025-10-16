@@ -6,12 +6,12 @@ To investigate the performance of the NVQWOA on graph similarity problems, we ch
 
 Classical simulation of quantum algorithms and computers can be approached in many different ways. Tensor networks simplify circuits into lower-entanglement systems but has exponentially degrading performance as circuit depth and entanglement entropy. Stabiliser-based approaches can efficiently simulate Clifford-only circuits and certain restricted non-Clifford extensions but cannot capture the arbitrary parameterised unitaries used in the NVQWOA. State vector simulation computes the full evolution of the state vector, but can be costly in computational resources.\todo{citations}
 
-State vector simulation was chosen as the strategy for its accuracy. The Qiskit Aer simulator and related packages were not suitable as the permutation mixer required is a sparse operator rather than a tensor-product of standard gates. Instead, we directly computed the state vector using QuOp, a Python framework for parallel simulation of quantum variational algorithms\cite{QuOp_MPI_paper_variational,QuOp_MPI}. QuOp provides efficient handling of large, sparse unitaries and supports MPI-based parallelisation, allowing simulation of high-dimensional state vectors across multiple compute nodes without loss of precision.
+State vector simulation was chosen as the strategy for its accuracy. The Qiskit Aer simulator and related packages were not suitable as the permutation mixer required is a sparse operator, which is inefficient to simulate under the requirements of using tensor products of standard gates. Instead, we directly computed the state vector using QuOp, a Python framework for parallel simulation of quantum variational algorithms\cite{QuOp_MPI_paper_variational,QuOp_MPI}. QuOp provides efficient handling of large, sparse unitaries and supports MPI-based parallelisation, allowing simulation of high-dimensional state vectors across multiple compute nodes without loss of precision.
 
 Classical simulations of the non-variational QWOA would not be possible without high-performance computing (HPC) resources, which were provided by the Pawsey Supercomputing Centre.
 
 \section{QuOp}
-QuOp is a Python 3 module designed for parallel, distributed-memory simulation of QVAs with arbitrary phase-shift and mixing operators. 
+QuOp is a Python 3 module designed for parallel, distributed-memory simulation of QVAs with arbitrary phase-shift and mixing operators\cite{QuOp_MPI_paper_variational,QuOp_MPI}. 
 
 To apply it to the NVQWOA, a parameter mapping was used to translate the hyperparameters of the NVQWOA to the individual parameters of a QVA. The quantum circuit was defined to be the two unitaries of the NVQWOA, the phase separator $U_Q$ and the mixer $U_M$. With these modifications, QuOp could simulate the NVQWOA.
 
@@ -30,15 +30,15 @@ A drawback of using edge overlap is that it is not well-defined for graphs with 
 The choice of graph similarity measure is not expected to have a strong effect on the observed results. The vertex mappings that give strong similarity with any particular measure usually give strong similarity with most measures. For the choice of a specific graph similarity measure to affect the results, it would have to give a different problem structure which significantly alters the structure of qualities.
 
 \section{Problem Instance Construction}
-There does not exist a widely used library of graph similarity problem instances. To test the algorithm on a wide group of fairly-chosen problems, we randomly generated the graphs using the Erdős-Rényi-Gilbert random graph model\cite{erdos_renyi,gilbert}.
-The number of nodes $n$, was varied to investigate how changing problem sizes changed the performance of the algorithm. The probability of edge inclusion was fixed at 0.5 for simplicity and repeatability.
+There does not exist a universally used set of graph similarity problem instances. To test the algorithm on a wide group of fairly-chosen problems, we randomly generated the graphs using the Erdős-Rényi-Gilbert random graph model\cite{erdos_renyi,gilbert}.
+The number of nodes $n$, was varied to investigate how changing problem sizes changed the performance of the algorithm $n=8,9,10$ were used for problem instance generation. The probability of edge inclusion was fixed at 0.5 for simplicity and repeatability. For each value of $n$, 30 graphs were generated using the NetworkX Python library \cite{networkx}. The seeds were selected starting from 0 and increasing by 1 for each successive problem instance. Any seeds that generated a graph isomorphic with any previously generated graphs would have been removed from the list of valid seeds. Ultimately, none of the seeds we used generated graphs isomorphic to one another for $n=8,9,10$, so the list of seeds was equivalent to the integers in [0,29].
 
-Differences in graphs were induced by copying a graph and removing $k$ edges. This allowed the upper limit of similarity to be easily known to be $\frac{n^2-2k}{n^2}$.
+Instead of calculating the similarity between the generated problem instances, the similarity was calculated between each graph and a copy of itself. This was to ensure similar distributions of similarity would arise between the different problem instances.
 
 \section{Phase Separator and Mixer Construction}
 The phase separating unitary was constructed in QuOp. For each vertex mapping, the quality (given as edge overlap) was calculated and stored as an array. This array was converted into a diagonal unitary operator in QuOp.
 
-The mixer was constructed as a column oriented array in Numpy and converted to a compressed sparse row format for storage. This sparse matrix could then be loaded into QuOp using HDF5 parallel I/O operations.\todo{cite HDF5?}
+The mixer was constructed as a column oriented array in Numpy \cite{numpy} and converted to a compressed sparse row format for storage. This sparse matrix could was loaded into QuOp using HDF5 parallel I/O operations\cite{hdf5}.
 
 Since we are considering graphs with an equal number of nodes $n$, vertex mappings match the arbitrary vertex indices of each graph to one another with some ordering, $\pi:\{1,...,n\}\to\{1,...,n\}$. (In the unlabelled graph problem, the vertices in each graph can still have indices, just not information that can inform how to match those indices together.) Each $\pi\in\Pi$ corresponds to a distinct reordering of the vertex indices. Therefore, vertex mappings can be equivalently written as permutations of $n$ distinct decision variables.
 
@@ -73,7 +73,7 @@ In this thesis, we use the term subshell distance to refer to the minimum distan
 $$\text{SD}(\mathbf{x}^1,\mathbf{x}^2)=\min \{m\in \mathbb{N}_0: \exists \tau_1,...,\tau_m \in \mathcal{T} \text{ with } \tau_m ... \tau_1 \mathbf{x}^2 = \mathbf{x}^1\}$$
 where $\mathcal{T}=\{(ij):1 \leq i \leq j \leq n \}$ is the set of all transpositions in the symmetric group $S_n$ and transpositions act by reindexing coordinates. For this analysis $\mathbf{x}^1$ is always an optimal solution. If there were multiple optimal solutions, the subshell distance from each optimal solution was found and the minimum value was used.
 
-Subshell distance is a useful metric in the analysis because it directly represents how close the solutions are to each other on the mixing graph. By analysing how amplification is applied to solutions depending on their subshell distance, we can observe how probability is being moved by the mixing process. Additionally, if one were to perform a local search after finding a near-optimal solution, it would likely be a search of solutions with low subshell distance to the found solution, to limit the search space.
+Subshell distance is a useful metric in the analysis because it directly represents how close the solutions are to each other on the mixing graph. By analysing how amplification is applied to solutions depending on their subshell distance, we can observe how probability is being moved by the mixing process. Additionally, if one were to perform a local search after finding a near-optimal solution, it would likely be a search of solutions with low subshell distance to the found solution, so analysing how the subshell distance of different solutions is relevant to the application of the NVQWOA.
 
 \subsubsection{Hamming Distance}
 Hamming distance is a simple yet powerful and highly interpretable measure for comparing objects. It measures the number of different decision variables for a solution. The Hamming distance for two solutions is defined as 
@@ -90,6 +90,6 @@ To do so, we analysed the qualities of solutions within each subshell. The avera
 
 
 \subsection{Hyperparameter Analysis}
-The hyperparameters were selected by the optimisation procedure outlined in section \ref{sec:parameters}, beginning with the initial parameters $\gamma=1, t=0.2, \beta=0.8$. These were chosen as the initial parameters by rounding an initial run of numerical optimised parameters to one significant figure.
+The hyperparameters were selected by the optimisation procedure outlined in section \ref{sec:parameters}, beginning with the arbitrarily chosen initial parameters $\gamma=0.5, t=0.5, \beta=0.5$.
 
 We stored the hyperparameters obtained for each problem instance with each optimisation objective, producing a set of nine hyperparameters for each problem instance.
