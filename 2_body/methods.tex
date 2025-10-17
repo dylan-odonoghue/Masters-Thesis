@@ -49,19 +49,15 @@ The NVQWOA has three hyperparameters: $\gamma, t, \beta$. Although sub-optimal p
  
 We used three different objective functions as inputs to the optimiser:
 \begin{enumerate}
-    \item \textit{Expected Value}: The expected value of the state vector after amplification. This is the most practical to measure on real quantum hardware.
+    \item \textit{Expected Value (EV)}: The expected value of the state vector after amplification. This would require the fewest shots to compute on real quantum hardware, and is a natural choice for optimisation \cite{cvar_opt}.
     \item \textit{Optimal Solution Probability (OSP)}: The probability of measuring an optimal solution. This is impractical to measure on quantum hardware, as it requires foreknowledge of the optimal solution and an unfeasible number of shots. It is included in our investigation here to provide an upper bound by finding the best possible parameters.
-    \item \textit{Conditional Value at Risk (CVaR)}: The expected value of the $\alpha$-tail of the state vector. This takes more shots to measure on quantum hardware than the expected value, but has been shown to give faster convergence to better solutions.\cite{CVaR_quantum}
+    \item \textit{Conditional Value at Risk (CVaR)}: The expected value of the $\alpha$-tail of the state vector. This takes more shots to measure on quantum hardware than the expected value, but has been shown to give faster convergence to better solutions\cite{CVaR_quantum}.
 \end{enumerate}
-Optimisation of the NVQWOA hyperparameters was done in QuOp during the NVQWOA simulation, using the Nelder-Mead method of numerical optimisation \cite{nelder_mead}. This method was chosen after experimentation with various numerical optimisation methods showed that Nelder-Mead converged the most quickly to the optimal parameters.
+Optimisation of the NVQWOA hyperparameters was done in QuOp during the NVQWOA simulation, using the Nelder-Mead method of numerical optimisation \cite{nelder_mead}. This method was chosen after experimentation with various numerical optimisation methods showed that Nelder-Mead converged to the optimal parameters with the fewest number of function evaluations.
 
 \section{Procedure}
 \subsection{Amplification Analysis}
-We started the analysis of the NVQWOA by considering one pair of graphs at a time, and verifying that amplification is correctly applied to the optimal and near-optimal solutions.
-
 For each of $n=8,9,10,$ the probability distribution for the different solutions was compared before and after the algorithm was applied. We expected that solutions with high similarity would be more likely to be measured after the algorithm was applied. Additionally, the probability to measure the optimal solution was calculated.
-
-We later expanded this analysis to problem sets with 30 distinct problem instances.
 
 \subsection{Solution Distance Analysis}
 To supplement the verification of amplification, it is useful to obtain statistics on the distance between solutions. This is because we expect that near-optimal solutions, which will have a low distance to the optimal solutions, should be amplified more than other solutions, which have a greater distance to the optimal solutions.

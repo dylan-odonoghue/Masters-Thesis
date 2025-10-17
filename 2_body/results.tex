@@ -1,7 +1,9 @@
-We classically simulated the NVQWOA on randomly generated unlabelled graph similarity instances of size $n=8,9,10$. Each size included 30 distinct problem instances, and each was evolved for $p=10$ iterations under hyperparameters optimised for three objective functions. Across all analyses, we observed consistent amplification of optimal and near-optimal solutions, strong correlation between amplification and solution proximity to the optimum, and mixing dynamics that align with theoretical predictions for suitability. These results provide strong evidence that NVQWOA effectively explores the solution space of the graph similarity problem and concentrates probability in regions of high similarity.
+We classically simulated the NVQWOA on randomly generated unlabelled graph similarity instances of size $n=8,9,10$. Each size included 30 distinct problem instances, and each was evolved for $p=10$ iterations under hyperparameters optimised for three objective functions. Across all analyses, we observed consistent amplification of optimal and near-optimal solutions, strong correlation between amplification and solution proximity to the optimum, and mixing dynamics that align with theoretical predictions for suitability.
+
+When referring to the hyperparameter optimisation objective functions explained in section \ref{sec:parameters}, we use the acronyms EV for expectation value, OSP for optimal solution probability, and CVaR for conditional value at risk.
 
 STRATEGY:
-First say the purpose, Second the major trends and observations, Third any key results to quantify, Fourth explain why it matters without going discussion mode.
+First say the purpose, Second the major trends and observations, Third any key results to quantify.
 
 \section{Amplification Analysis}
 The first analysis aimed to verify that the NVQWOA amplifies the measurement probability of optimal and near-optimal solutions relative to the uniform initial state distribution. 
@@ -23,12 +25,12 @@ Figures \ref{fig:similarity dist} and \ref{fig:similarity log dist} show the ave
     \label{fig:similarity log dist}
 \end{figure}
 
-Figure \ref{fig:osp} is a boxplot showing the probability of measuring the optimal solution (OSP) after amplification. The OSP varied significantly across problem instances but consistently improved following NVQWOA evolution. Median OSP values increased by more than an order of magnitude over the initial probability when using the expected value as the objective function. When
+Figure \ref{fig:osp} is a boxplot showing the probability of measuring the optimal solution after amplification. The OSP varied significantly across problem instances but consistently improved following NVQWOA evolution. Median OSP values increased by more than an order of magnitude over the initial probability when using EV.
 
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=\textwidth]{OSP_boxplot_multiple.png} 
-    \caption{Optimal solution probability (OSP) distributions. The average upper bound represents the mean OSP over all problem instances after optimising the hyperparameters to maximise the OSP.}
+    \caption{Boxplots representing the probability to measure the optimal solution. The average upper bound represents the mean OSP over all problem instances after optimising the hyperparameters to maximise the OSP.}
     \label{fig:osp}
 \end{figure}
 
@@ -72,15 +74,13 @@ As shown in Figure \ref{fig:ham improvement}, the mean Hamming distance decrease
     \label{fig:ham improvement}
 \end{figure}
 
-Figure \ref{fig:amp vs ham} shows how much amplification was applied to each solution based on their Hamming distance. The optimal solutions received average amplifications of X,Y and Z. Unexpectedly, solutions with a Hamming distance appear to have been amplified a small amount as well, receiving on average A,B, and C.
+Figure \ref{fig:amp vs ham} shows how much amplification was applied to each solution based on their Hamming distance. The optimal solutions received average amplifications of X,Y and Z.
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=\textwidth]{amplification_vs_hamming_multiple.png}
     \caption{Mean amplification applied to each solution grouped by their Hamming distance from the optimal solution.}
     \label{fig:amp vs ham}
 \end{figure}
-
-
 
 \section{Subshell Distance Analysis}
 We also analysed the subshell distance between each solution and the optimal solution(s), which directly reflects the structure of the permutation mixer and the connectivity of the mixing graph.
@@ -146,9 +146,9 @@ Lower variance indicates more phase-coherence within the shell, and therefore mo
 \end{figure}
 
 \section{Hyperparameter Analysis}
-We optimised the three NVQWOA hyperparameters $\beta, \gamma, t$ under three different objective functions applied to the final state: the expected value, the probability of measuring an optimal solution (OSP), and the conditional value at risk (CVaR).
+We optimised the three NVQWOA hyperparameters $\beta, \gamma, t$ under three different objective functions applied to the final state: the expected value (EV), the probability of measuring an optimal solution (OSP), and the conditional value at risk (CVaR).
 
-The optimal values for $t$ decreased with system size for all objective functions. The optimal values for $\gamma$ remained constant. The optimal values for $\beta$ went on a walkabout.
+The optimal values for $t$ decreased with system size,. The optimal values for $\gamma$ remained constant. 
 
 The optimal values for the hyperparameters were distinct for each objective function across all problem instances.
 
