@@ -1,16 +1,19 @@
-The results of each area of investigation were largely expected and particularly show the effectiveness of using CVaR as a hyperparameter optimisation objective function.
+The results presented in Chapter \ref{chap:results} provides evidence that the NVQWOA performs well on the task of unlabelled graph similarity. For problem sizes of $n=8,9,10$, the the algorithm reliably amplifies optimal and near-optimal solutions. of each area of investigation were largely expected and particularly show the effectiveness of using CVaR as a hyperparameter optimisation objective function.
 
 \section{Amplification Verification}
-The probability to measure the optimal and near-optimal solutions was consistently amplified by the NVQWOA, as shown in Figures \ref{fig:similarity dist}, \ref{fig:similarity log dist}, and \ref{fig:osp}.
+Quantum optimisation algorithms are expected to bias measurements of their final states towards higher quality solutions.
+
+After $p=10$ iterations of the NVQWOA, the probability to measure the optimal and near-optimal solutions was consistently increased, as shown in Figures \ref{fig:similarity dist}, \ref{fig:similarity log dist}, and \ref{fig:osp}. The amount of amplification applied to each solution decreased as its distance from the optimal solution(s) increased, as shown in Figures \ref{fig:amp vs ham} and \ref{fig:amp vs sub}. Applying amplification to near-optimal solutions is a valuable property, as classical local searches can feasibly locate the optimal solution even when the final measurement is non-optimal.
 
 \section{Hyperparameters}
-The choice of hyperparameter optimisation objective function had a large impact on the amount of amplification applied to the optimal and near-optimal solutions. 
+The choice of hyperparameter optimisation objective function had a large impact on the performance of the algorithm. Hyperparameters optimised for the OSP produced the highest peak probabilities for measurement of the optimal solution but are impractical for practical implementation. EV yielded low levels of amplification, but is the most straightforward to implement. CVaR demonstrated the most balanced performance, strongly amplifying the optimal and near-optimal solutions, while still being practical to implement on quantum hardware.
+
+The strong performance of CVaR aligns with previous findings in QVA literature \cite{cvar_opt,CVaR_quantum}, 
 
 \section{Solution Distance}
 Hamming distance is less smooth than subshell distance because there is degeneracy in the Hamming distance even for solutions with differing solution distance. For example, the permutation $[1,2,3,4]$ has a Hamming distance of 4 from both $[2,1,4,3]$ and $[2,3,4,1]$, but its subshell distances would be 2 and 3 respectively. Solutions with different subshell distances will be distributed differently on the mixing graph, so the probability will not be as concentrated.
 
 \section{Mixer Analysis}\label{sec:mixer discussion}
+The suitability of the permutation mixer for the unlabelled graph similarity problem is supported by the quality gap and variance analyses. The mean quality gap increases monotonically with increasing shell distance, adhering to the assumption that solutions further from the optimum are of systemically lower quality than solutions close to the optimum. This structure enables the NVQWOA to exploit the mixing process effectively, as described in section \ref{sec:subshell}.
 
-Mean quality gap
-
-Subshell quality variance
+Subshell variance trends also support the theoretical conditions of the NVQWOA. The small subshell variances as shown in Figure \ref{fig:shell variance} show that the mean quality is an accurate measure to describe the qualities within each subshell. This is further quantified by the small second-order variances, which imply similar levels of variance across the subshells. The spread of qualities will not significantly change between subshells, just the mean. Pairing this with a monotonically increasing mean cost gap over subshell distance implies each subshell behaves similarly, so no matter where the optimal solution is in the mixing graph, a good choice of hyperparameters will successfully amplify the optimal solution.
