@@ -1,24 +1,23 @@
-\section{Overview}
-We classically simulated the application of the NVQWOA to the graph similarity problem. The measure of graph similarity chosen was Edge Overlap, as it is a low-cost measure that still serves as a interpretable measure of similarity. The aim was to maximise this objective function through matrix exponentiation and multiplication,analytically computing the manipulation of state vector such that the states which corresponded with the optimal solutions (those with the greatest similarity) had an amplified probability of being measured.
+We simulated the application of the NVQWOA to the graph similarity problem. The measure of graph similarity chosen was Edge Overlap, as it is a low-cost measure that still serves as a interpretable measure of similarity. The aim was to maximise this objective function through matrix exponentiation and multiplication,analytically computing the manipulation of state vector such that the states which corresponded with the optimal solutions (those with the greatest similarity) had an amplified probability of being measured.
 
-\section{Classical Simulation}
-To investigate the performance of the NVQWOA on graph similarity problems, we chose to perform classical simulations of a quantum computer, rather than directly performing the algorithm on a quantum computer. Classical simulation allows for computation with negligible stochastic or decoherence errors and complete analysis of the evolving quantum state, something which is inaccessible on real quantum hardware but useful for characterising performance and benchmarking.
+There were two phases to the analysis. First, we applied the algorithm to one problem at a time and small problem sizes up to $n=9$, using standard matrix exponentiation. Then we applied the algorithm to several problem instances simultaneously and had problem sizes up to $n=10$.
 
-Classical simulation of quantum algorithms and computers can be approached in many different ways. Tensor networks simplify circuits into lower-entanglement systems but has exponentially degrading performance as circuit depth and entanglement entropy. Stabiliser-based approaches can efficiently simulate Clifford-only circuits and certain restricted non-Clifford extensions but cannot capture the arbitrary parameterised unitaries used in the NVQWOA. State vector simulation computes the full evolution of the state vector, but can be costly in computational resources.\todo{citations}
+\section{Simulation}
 
-State vector simulation was chosen as the strategy for its accuracy. The Qiskit Aer simulator and related packages were not suitable as the permutation mixer required is a sparse operator, which is inefficient to simulate under the requirements of using tensor products of standard gates. Instead, we directly computed the state vector using QuOp, a Python framework for parallel simulation of quantum variational algorithms\cite{QuOp_MPI_paper_variational,QuOp_MPI}. QuOp provides efficient handling of large, sparse unitaries and supports MPI-based parallelisation, allowing simulation of high-dimensional state vectors across multiple compute nodes without loss of precision.
+To investigate the performance of the NVQWOA on graph similarity problems, we chose to perform classical simulations of a quantum computer, rather than directly performing the algorithm on a quantum computer. Simulation allows for computation with negligible stochastic or decoherence errors and complete analysis of the evolving quantum state, something which is inaccessible on real quantum hardware but useful for characterising performance and benchmarking.
 
-Classical simulations of the non-variational QWOA would not be possible without high-performance computing (HPC) resources, which were provided by the Pawsey Supercomputing Centre.
+Simulation of quantum algorithms and computers can be approached in many different ways. Tensor networks simplify circuits into lower-entanglement systems but has exponentially degrading performance as circuit depth and entanglement entropy. Stabiliser-based approaches can efficiently simulate Clifford-only circuits and certain restricted non-Clifford extensions but cannot capture the parameterised unitaries used in the NVQWOA. State vector simulation computes the full evolution of the state vector, but can be costly in computational resources. TODO: CITATIONS
 
-\section{QuOp}
-QuOp is a Python 3 module designed for parallel, distributed-memory simulation of QVAs with arbitrary phase-shift and mixing operators\cite{QuOp_MPI_paper_variational,QuOp_MPI}. 
+State vector simulation was chosen as the strategy for its accuracy. The Qiskit Aer simulator and related packages were not suitable as the permutation mixer required is a sparse operator, which is inefficient to simulate under the requirements of using tensor products of standard gates. Instead, we directly computed the relevant matrix operations. For the first phase of analysis, the matrix exponentiation and multiplication was able to be performed on local hardware using the well-known SciPy package. For the second phase of analysis, the large problem sizes required parallel computation. To implement this, we used QuOp, a Python framework for parallel simulation of quantum variational algorithms\cite{QuOp_MPI_paper_variational,QuOp_MPI}. QuOp provides efficient handling of large, sparse unitaries and supports MPI-based parallelisation, allowing simulation of high-dimensional state vectors across multiple compute nodes without loss of precision.
 
-To apply it to the NVQWOA, a parameter mapping was used to translate the hyperparameters of the NVQWOA to the individual parameters of a QVA. The quantum circuit was defined to be the two unitaries of the NVQWOA, the phase separator $U_Q$ and the mixer $U_M$. With these modifications, QuOp could simulate the NVQWOA.
+Parallel simulations of the non-variational QWOA would not be possible without high-performance computing (HPC) resources, which were provided by the Pawsey Supercomputing Centre.
+
+To simulate NVQWOA using QuOp, a parameter mapping was used to translate the hyperparameters of the NVQWOA to the individual parameters of a QVA. The quantum circuit was defined to be the two unitaries of the NVQWOA; the phase separator $U_Q$, and the mixer $U_M$. With these modifications, QuOp could simulate the NVQWOA.
 
 \section{Graph Similarity Measure}
 As described in section \ref{graph_sim_section}, there are many options for the choice of which graph similarity measure to use.
 
-Graph edit distance is the most common choice, but is costly to compute, as it requires the equivalent of a pathfinding search, such as an $A^*$ search algorithm.\todo{cite}
+Graph edit distance is the most common choice, but is costly to compute, as it requires the equivalent of a pathfinding search, such as an $A^*$ search algorithm. Maximum common
 Since computational resources were a significant pressure, we chose one of the least computationally expensive similarity measures to compute, the edge overlap.
 
 To calculate the edge overlap, the number of matching entries in the adjacency matrices of the graphs are counted and the sum is divided by $n^2$, which corresponds to the size of the adjacency matrices and the maximum possible overlap. This easy calculation also makes the edge overlap highly interpretable. One can imagine the vertex mapping as translating the vertices of one graph to the corresponding vertices in the other graph, and the edge overlap represents how much the edges line up correctly. The edge overlap also works on directed graphs, but directed graphs were not investigated in this thesis.
@@ -29,7 +28,7 @@ A drawback of using edge overlap is that it is not well-defined for graphs with 
 
 The choice of graph similarity measure is not expected to have a strong effect on the observed results. The vertex mappings that give strong similarity with any particular measure usually give strong similarity with most measures. For the choice of a specific graph similarity measure to affect the results, it would have to give a different problem structure which significantly alters the structure of qualities.
 
-\section{Problem Instance Construction}
+\section{Problem Instance Construction}\label{sec:problem const}
 There does not exist a universally used set of graph similarity problem instances. To test the algorithm on a wide group of fairly-chosen problems, we randomly generated the graphs using the Erdős-Rényi-Gilbert random graph model\cite{erdos_renyi,gilbert}.
 The number of nodes $n$, was varied to investigate how changing problem sizes changed the performance of the algorithm $n=8,9,10$ were used for problem instance generation. The probability of edge inclusion was fixed at 0.5 for simplicity and repeatability. For each value of $n$, 30 graphs were generated using the NetworkX Python library \cite{networkx}. The seeds were selected starting from 0 and increasing by 1 for each successive problem instance. Any seeds that generated a graph isomorphic with any previously generated graphs would have been removed from the list of valid seeds. Ultimately, none of the seeds we used generated graphs isomorphic to one another for $n=8,9,10$, so the list of seeds was equivalent to the integers in [0,29].
 
@@ -53,39 +52,39 @@ We used three different objective functions as inputs to the optimiser:
     \item \textit{Optimal Solution Probability (OSP)}: The probability of measuring an optimal solution. This is impractical to measure on quantum hardware, as it requires foreknowledge of the optimal solution and an unfeasible number of shots. It is included in our investigation here to provide an upper bound by finding the best possible parameters.
     \item \textit{Conditional Value at Risk (CVaR)}: The expected value of the $\alpha$-tail of the state vector. This takes more shots to measure on quantum hardware than the expected value, but has been shown to give faster convergence to better solutions\cite{CVaR_quantum}.
 \end{enumerate}
-Optimisation of the NVQWOA hyperparameters was done in QuOp during the NVQWOA simulation, using the Nelder-Mead method of numerical optimisation \cite{nelder_mead}. This method was chosen after experimentation with various numerical optimisation methods showed that Nelder-Mead converged to the optimal parameters with the fewest number of function evaluations.
+Optimisation of the NVQWOA hyperparameters was done in QuOp during the NVQWOA simulation, using the Nelder-Mead method of numerical optimisation \cite{nelder_mead}. This method was chosen for its efficiency. Since it does not require the computation of derivatives, the method is faster to compute than other alternatives. One downside of using Nelder-Mead is that it can converge to a locally optimal set of hyperparameters, rather than a globally optimal set. Additionally, it does not have an in-built method to set boundaries on the possible parameters, so it is possible that it could converge to non-physical parameters such as $t<0$.
 
 \section{Procedure}
-\subsection{Amplification Analysis}
+    \subsection{Amplification Analysis}
 For each of $n=8,9,10,$ the probability distribution for the different solutions was compared before and after the algorithm was applied. We expected that solutions with high similarity would be more likely to be measured after the algorithm was applied. Additionally, the probability to measure the optimal solution was calculated.
 
-\subsection{Solution Distance Analysis}
+    \subsection{Solution Distance Analysis}\label{sec:solution distance}
 To supplement the verification of amplification, it is useful to obtain statistics on the distance between solutions. This is because we expect that near-optimal solutions, which will have a low distance to the optimal solutions, should be amplified more than other solutions, which have a greater distance to the optimal solutions.
 
 There are two useful notions of distance between solutions: subshell distance and Hamming distance, which are defined and explained below.
 
-\subsubsection{Subshell Distance}
+    \subsubsection{Subshell Distance}
 In this thesis, we use the term subshell distance to refer to the minimum distance on the mixing graph between a solution and an optimal solution. The term subshell in this notion of distance comes from the description in section \ref{sec:subshell}, and is used to distinguish this distance measure from other approaches. The mixer we are using is the permutation mixer, so the subshell distance is defined as:
 $$\text{SD}(\mathbf{x}^1,\mathbf{x}^2)=\min \{m\in \mathbb{N}_0: \exists \tau_1,...,\tau_m \in \mathcal{T} \text{ with } \tau_m ... \tau_1 \mathbf{x}^2 = \mathbf{x}^1\}$$
 where $\mathcal{T}=\{(ij):1 \leq i \leq j \leq n \}$ is the set of all transpositions in the symmetric group $S_n$ and transpositions act by reindexing coordinates. For this analysis $\mathbf{x}^1$ is always an optimal solution. If there were multiple optimal solutions, the subshell distance from each optimal solution was found and the minimum value was used.
 
 Subshell distance is a useful metric in the analysis because it directly represents how close the solutions are to each other on the mixing graph. By analysing how amplification is applied to solutions depending on their subshell distance, we can observe how probability is being moved by the mixing process. Additionally, if one were to perform a local search after finding a near-optimal solution, it would likely be a search of solutions with low subshell distance to the found solution, so analysing how the subshell distance of different solutions is relevant to the application of the NVQWOA.
 
-\subsubsection{Hamming Distance}
+    \subsubsection{Hamming Distance}
 Hamming distance is a simple yet powerful and highly interpretable measure for comparing objects. It measures the number of different decision variables for a solution. The Hamming distance for two solutions is defined as 
 $$\text{HD}(\mathbf{x}^1,\mathbf{x}^2)=\sum_{i=0}^n \delta(x^1_i,x^2_i)$$
 where $\delta$ is 1 if $x^1_i\neq x^2_i$ and 0 otherwise. For this analysis $\mathbf{x}^1$ is always an optimal solution. If there were multiple optimal solutions, the Hamming distance from each optimal solution was found and the minimum value was used.
 
 Hamming distance is a useful metric in the analysis because it gives a measure of distance that is not related to the structure of the algorithm and can be easily compared to other combinatorial optimisation problems and algorithms.
 
-\subsection{Mixer Analysis}
+    \subsection{Subshell Analysis}
 Using the notion of subshell distance and the conditions described in section \ref{sec:subshell}, we can characterise the suitability of this mixer to the problem of graph similarity. 
 
-To do so, we analysed the qualities of solutions within each subshell. The average difference in quality between the optimal solutions and the solutions in each subshell were found. The variance in quality within each subshell was found. The second-order variance over the subshells was found.
+To do so, we analysed the qualities of solutions within each subshell. The average difference in quality between the optimal solutions and the solutions in each subshell were found. This was called the mean quality gap. It is expected that solutions that have a high subshell distance are of lower quality, so the mean quality gap should ideally increase monotonically with subshell distance. If the mean quality gap was not monotonically increasing, then 
 
+The variance in quality within each subshell was found. This was called the subshell variance. The variance of the average variances was found. This was called the second-order variance.
 
-
-\subsection{Hyperparameter Analysis}
-The hyperparameters were selected by the optimisation procedure outlined in section \ref{sec:parameters}, beginning with the arbitrarily chosen initial parameters $\gamma=0.5, t=0.5, \beta=0.4$.\todo{not arbitrary}
+    \subsection{Hyperparameter Analysis}
+The hyperparameters were selected by the optimisation procedure outlined in section \ref{sec:parameters}, beginning with the initial parameters $\gamma=1.0, t=0.1, \beta=0.4$. This set of initial parameters were recommended by Tavis et al. \cite{bennett2024nonvariational}.
 
 We stored the hyperparameters obtained for each problem instance with each optimisation objective, producing a set of nine hyperparameters for each problem instance.
