@@ -49,7 +49,7 @@ We constructed the mixer by explicitly generating the sets of nearest-neighbours
 \section{Hyperparameter Optimisation} \label{sec:parameters}
 The NVQWOA has three hyperparameters: $\gamma, t, \beta$. Although sub-optimal parameters can produce quantum circuits that significantly amplify optimal and near-optimal solutions, it is expected that finding optimal values for these hyperparameters through three-dimensional numerical optimisation will give the best possible results.\cite{bennett2024analysisnonvariationalquantumwalkbased}
  
-We used three different objective functions as inputs to the optimiser:
+We used three different hyperparameter optimisation objective functions:
 \begin{enumerate}
     \item \textit{Expected Value (EV)}: The expected value of the state vector after amplification. This would require the fewest shots to compute on real quantum hardware, and is a natural choice for optimisation \cite{cvar_opt}.
     \item \textit{Optimal Solution Probability (OSP)}: The probability of measuring an optimal solution. This is impractical to measure on quantum hardware, as it requires foreknowledge of the optimal solution and an unfeasible number of shots. It is included in our investigation here to provide an upper bound by finding the best possible parameters.
