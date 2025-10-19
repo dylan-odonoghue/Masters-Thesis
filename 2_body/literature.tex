@@ -41,7 +41,7 @@ In contrast, the graph similarity problem is the problem of calculating how clos
 
 The choice of measure often depends on the specific application and the properties of the graphs being compared. Considerations such as cost, time, and interpretability inform which measure is best for a practical problem.
 
-Koutra et al. \cite{deltacon} formalised a set of axioms that graph similarity measures should conform to: TODO: MAPPING OUTPUTS TO (0,1].
+Koutra et al. \cite{deltacon} formalised a set of axioms that graph similarity measures should conform to:
 \begin{enumerate}
     \item Identity: $sim(G_{1},G_{2})=1 \iff G_{1} \cong G_{2}$ \label{axiom:1}
     \item Symmetric:  $sim(G_{1},G_{2})=sim(G_{2},G_{1})$ \label{axiom:2}
@@ -49,7 +49,7 @@ Koutra et al. \cite{deltacon} formalised a set of axioms that graph similarity m
     $\lim_{n \to \infty} sim(G_{1},G_{2}) = 0$ \label{axiom:3}
 \end{enumerate}
 
-The measures listed above can all be minimally adapted to satisfy these axioms.
+The measures listed above can all be adapted to satisfy these axioms. For example, Koutra's axioms naturally require that the output of a graph similarity function remain bounded in the interval [0, 1]. To adapt a measures of distance such as GED to this requirement this can be accomplished by taking the inverse exponential of the distance, $e^{-f(G_1,G_2)}$. Other measures, like EO, trivially adhere to these axioms.
 
 Most graph similarity measures assume a given mapping between the vertices of the graphs. Unlike in graph isomorphism, this vertex mapping doesn't need to be a bijection, since there exists a notion of similarity between graphs with a different number of vertices. For graph similarity methods such as those listed previously, the choice of vertex mapping can change the final result. However, Koutra's axiom \ref{axiom:1} requires that graph similarity measures can identify isomorphic graphs by giving them a similarity of 1.
 
@@ -57,12 +57,12 @@ So to satisfy Koutra's axioms, we must find a mapping between the graphs that ma
 
 To find the best mapping between labelled graphs, one can simply `pair up' the vertices in the graphs so that each pair consists of one vertex from each graph that share the same label. This significantly reduces the number of possible mappings (often to just 1), so finding the mapping with the maximum similarity is simple.
 
-To find the best mapping between unlabelled graphs is very challenging. In the general case, the similarity associated with every possible permutation of mappings must be checked until either a mapping that shows isomorphism (or another verifiable global maximum) is found, or the entire space of mappings has been searched. An example of this is shown in Figure \ref{fig:lit sim example}
+To find the best mapping between unlabelled graphs is very challenging. In the general case, the similarity associated with every possible permutation of mappings must be checked until either a mapping that shows isomorphism (or another verifiable global maximum) is found, or the entire space of mappings has been searched. An example of vertex mappings is shown in Figure \ref{fig:lit sim example}, which shows how edge overlap (EO) and graph edit distance (GED) are strongly affected by the choice of a vertex mapping.
 
 \begin{figure}
 \centering
 \includegraphics[width=\textwidth]{graph similarity hardness.png}
-\caption{Diagram depicting how the choice of vertex mapping affects the edge overlap (EO) between G1 in orange and G2 in black. (Left) depicts the case when the two graphs are maximally aligned, (right) depicts the random case with misalignment.}
+\caption{Diagram depicting how the choice of vertex mapping affects the similarity between $G_1$ (orange) and $G_2$ (black). (Left) depicts the case when the two graphs are maximally aligned, (right) depicts a random case with misalignment. The network structure of $G_1$ and $G_2$ were not modified, but an alternate vertex mapping $\pi$ was applied to $G_2$ with respect to $G_1$.}
 \label{fig:lit sim example}
 \end{figure}
 
@@ -83,7 +83,9 @@ where $\pi(G_2)$ denotes the relabelling of $G_2$ induced by $\pi$.
 
 The unlabelled graph similarity problem is the problem of computing $\text{Sim}(G_1,G_2)$. Since $\Pi$ is set of maps between two finite sets, the size of the set $|\Pi|$ scales super-exponentially. In the case that $|V_1|=|V_2|$ and the maps $\pi$ denote permutations of $n$ vertices (), $|\Pi|=n!$.
 
-This problem is known to be NP-hard, meaning that there is no known polynomial-time algorithm to solve it for all instances. As a result, various heuristic and approximation techniques have been developed to tackle the graph similarity problem. This thesis will explore an approximate quantum algorithm, described in the remainder of this chapter.
+This problem is known to be NP-hard, meaning that there is no known polynomial-time algorithm to solve it for all instances. As a result, various heuristic and approximation techniques have been developed to tackle the graph similarity problem. 
+
+The primary challenge is the large solution space of the problem, which may be addressed by quantum computers, as the amount of resources required to encode all solutions would grow only linearly or as a low order polynomial. This thesis will explore an approximate quantum algorithm, described in the remainder of this chapter.
 
 \section{Quantum Computing}
 Quantum computing is based on the principles of quantum mechanics, which describe the behaviour of particles at the atomic and subatomic levels.
@@ -137,57 +139,78 @@ The measurements can be performed relative to any basis in the qubit's vector sp
 
 This state is an example of entanglement, a unique quantum phenomenon where the states of two or more qubits become correlated such that the state of one qubit cannot be described independently of the state of the other qubit(s). For example, in the entangled state above, if one were to measure the first qubit to be in the state $\ket{0}$, that necessarily requires the second qubit to also be in the state $\ket{0}$. 
 
-The measurement of one of the entangled qubits has collapsed the superposition for both qubits. This surprising result was initially deemed unphysical on the grounds that it violates local realism by Einstein, Poldowsky, and Rosen, the first to describe this behaviour\cite{epr_paradox}. Nevertheless, quantum entanglement and its implications have been repeatedly verified through experimentally violating Bell's inequality\cite{bell_theorem}, establishing that the correlations produced from quantum entanglement cannot be explained by local hidden variables\cite{bell_inequality_1,bell_inequality_2,bell_inequality_3}.
-These correlations are fundamental to quantum algorithms. Without entanglement, quantum computers could be efficiently simulated by classical computers, negating any advantage\cite{Jozsa_2003}.
+The measurement of one of the entangled qubits has collapsed the superposition for both qubits. This surprising result was initially deemed unphysical on the grounds that it violates local realism by Einstein, Poldowsky, and Rosen, the first to describe this behaviour \cite{epr_paradox}. Nevertheless, quantum entanglement and its implications have been repeatedly verified through experimentally violating Bell's inequality \cite{bell_theorem}, establishing that the correlations produced from quantum entanglement cannot be explained by local hidden variables \cite{bell_inequality_1,bell_inequality_2,bell_inequality_3}.
+These correlations are fundamental to quantum algorithms. Without entanglement, quantum computers could be efficiently simulated by classical computers, negating any advantage \cite{Jozsa_2003}.
 
 \subsection{Quantum Algorithms and Challenges}
 
-Quantum algorithms seek to leverage properties of qubits and quantum gates to solve specific problems more efficiently than classical algorithms. Notable examples include Shor's algorithm for integer factorisation\cite{Shor_algorithm}, which runs exponentially faster than the best-known classical algorithms, and Grover's algorithm for unstructured search\cite{grover_search}, which provides a quadratic speedup over classical search algorithms.
+Quantum algorithms seek to leverage properties of qubits and quantum gates to solve specific problems more efficiently than classical algorithms. Notable examples include Shor's algorithm for integer factorisation \cite{Shor_algorithm}, which runs exponentially faster than the best-known classical algorithms, and Grover's algorithm for unstructured search \cite{grover_search}, which provides a quadratic speedup over classical search algorithms and is the optimal quantum algorithm for unstructured searches \cite{grover_optimal}.
 
-Large, universal, fault-tolerant quantum computers that can run these algorithms at useful scales will require large numbers of qubits. While researchers have made significant progress in error correction, coherence times, qubit connectivity, and gate fidelities, fault tolerant quantum computing may take decades to achieve. In the meantime, Noisy Intermediate-Scale Quantum (NISQ) computers already exist, and can run small-scale quantum algorithms that can provide insights into quantum behaviour and inform the development of larger systems.
+Large, universal, fault-tolerant quantum computers that can run these algorithms at useful scales will require large numbers of qubits. While researchers have made significant progress in error correction, coherence times, qubit connectivity, and gate fidelities, fault tolerant quantum computing may take decades to achieve. In the meantime, Noisy Intermediate-Scale Quantum (NISQ) computers already exist, and can run small-scale quantum algorithms that can provide insights into quantum behaviour and inform the development of larger systems \cite{NISQ_era}.
 
-These NISQ devices are limited by the number of qubits, gate fidelities, and coherence times. As a result, quantum algorithms designed for NISQ devices must be efficient in terms of qubit usage and circuit depth to minimise the impact of noise and errors. 
+These NISQ devices are limited by the number of qubits, gate fidelities, and coherence times. As a result, quantum algorithms designed for NISQ devices must be efficient in terms of qubit usage and circuit depth to minimise the impact of noise and errors \cite{NISQ_era}. 
 
-Even if NISQ devices cannot solve problems faster than the best classical computers using the best classical algorithms (particularly with the emergence of exascale supercomputing), they could still provide an economic advantage by using less energy or by being lower cost to build and operate.
+Even if NISQ devices cannot solve problems faster than the best classical computers using the best classical algorithms (particularly with the emergence of exascale supercomputing), they could still provide an economic advantage by using less energy or by being lower cost to build and operate \cite{NISQ_era}.
 
 NISQ algorithms are designed to work within these low-resource constraints. These algorithms typically involve a hybrid approach, where a quantum computer is used to prepare and measure quantum states, while a classical computer optimises parameters based on the measurement results. Some examples of NISQ-era algorithms are described in the following sections.
 
 \section{Variational Quantum Algorithms}
+Variational Quantum Algorithms (VQAs) are a class of hybrid quantum-classical algorithms that leverage the strengths of both quantum and classical computing to solve optimisation problems. They are particularly well-suited for NISQ devices due to their relatively low resource requirements and robustness to noise. The goal of a VQA is to learn the parameters for a quantum circuit which evolves an initial state into a final state that encodes the computational objective.
 \subsection{VQAs in General}
-Variational Quantum Algorithms (VQAs) are a class of hybrid quantum-classical algorithms that leverage the strengths of both quantum and classical computing to solve optimisation problems. They are particularly well-suited for NISQ devices due to their relatively low resource requirements and robustness to noise.
 
 VQAs implement a parametrised quantum circuit (PQC) whose unitary evolution is governed by a set of $d$ classically tunable parameters $\mathbf{\theta}\in\mathbb{R}^d$. The quantum device prepares the state
 $$\ket{\psi(\mathbf{\theta})}=U(\mathbf{\theta})\ket{0}^{\otimes n}$$
-where $U(\mathbf{\theta})$ is a depth-restricted circuit composed of parameterised single- and multi-qubit gates, and $n$ is the number of qubits in the input to the quantum computer. Commonly, $d=\mathcal{O}(\text{poly}(n))$, since we seek efficient circuits that are polynomial in resources. TODO: CITATION
+where $U(\mathbf{\theta})$ is a depth-restricted circuit composed of parameterised single- and multi-qubit gates, and $n$ is the number of qubits in the input to the quantum computer. Commonly, $d=\mathcal{O}(\text{poly}(n))$, since we seek efficient circuits that are polynomial in resources \cite{VQAs}.
 
 The objective function of the algorithm is typically expressed as the expectation value of a Hermitian operator $H$ with respect to the variational state:
-$$C(\mathbf{\theta})= \bra{\psi(\mathbf{\theta})}H\ket{\psi(\mathbf{\theta})} $$
-
-This cost function is estimated on the quantum device via repeated projective measurements in appropriate bases. A classical optimiser updates $\mathbf{\theta}$ with the aim of minimising (or maximising) $C(\mathbf{\theta})$, thus driving the quantum circuit towards a state that approximates the optimal configuration with respect to the target problem. The algorithm repeatedly prepares this variational quantum state, measures its expectation value, and optimises the parameters until a certain number of iterations is complete or until measurements of the quantum state have an approximation ratio sufficiently close to 1.
+$$
+C(\mathbf{\theta})= \bra{\psi(\mathbf{\theta})}H\ket{\psi(\mathbf{\theta})}. 
+$$
+This cost function is estimated on the quantum device via repeated projective measurements in an appropriate basis. A classical optimiser updates $\mathbf{\theta}$ with the aim of minimising (or maximising) $C(\mathbf{\theta})$, thus driving the quantum circuit towards a state that approximates the optimal configuration with respect to the target problem. The algorithm repeatedly prepares this variational quantum state, measures its expectation value, and optimises the parameters until a certain number of iterations is complete or until measurements of the quantum state have an approximation ratio sufficiently close to 1.
 
 To summarise, VQAs consist of a two-step loop: a quantum computer evolves the initial state to a final state via a PQC, then a classical computer measures the expectation value of the final state and uses this data to update the PQC. At the end of this loop, the quantum computer's output is now a good approximation of the optimal configuration.
 
 \subsection{QAOA}
-The Quantum Approximate Optimisation Algorithm (QAOA) is a subclass of VQAs designed to solve combinatorial optimisation problems, introduced by Farhi et al. \cite{QAOA} In this formulation, the PQC is defined by alternating applications of unitaries. One is a quality mixer associated with the problem instance and the other is a mixing operation that induces interference.
+The Quantum Approximate Optimisation Algorithm (QAOA) is a type of VQA designed to solve combinatorial optimisation problems, introduced by Farhi et al. \cite{QAOA} In this formulation, the PQC $U(\mathbf{\theta})$ is defined by alternating applications of unitaries. One is a quality-based phase separation unitary $U(C,\gamma)$ associated with the problem instance and the other is a mixer $U(B,\beta)$ that induces interference.
 
-The quantum state begins in the equal superposition state over the computational basis states:
-$$\ket{s}=\frac{1}{\sqrt{2^n}}\sum_{z}\ket{z}$$
-where $n$ is the number of qubits.
+We are given some combinatorial optimisation problem, specified by $m$ clauses and solutions $\mathbf{x}=(x_1,x_2,...,x_n)$ that have binary decision variables $x_j\in\{0,1\}$. Each clause is a constraint on a subset of the decision variables which is satisfied for certain assignments of those bits and unsatisfied for other assignments. The objective function is the number of satsified clauses,
+$$
+C(\mathbf{x})=\sum_{\alpha=1}^m C_\alpha(\mathbf{x})
+$$
+where $\mathbf{x}=$ is encoded as a bit string and $C_\alpha(\mathbf{x})=1$ if $\mathbf{x}$ satisfies clause $\alpha$ and 0 otherwise. 
 
-Define a unitary operator $U(\gamma)$ which depends on: an angle $\gamma$, which lies between 0 and $2\pi$; and a quality operator $Q$, which is a diagonal operator that contains the objective function value for each solution.
-$$U(\gamma)=e^{i\gamma Q}$$
-Define operator $U(\beta)$ which depends on the parameter $\beta$, which lies between 0 and $\pi$.
-$$U(\beta)=\Pi_{j=1}^{n} e^{-i\beta \sigma_j^x}$$
-Here, $\sigma_j^x$ denotes the Pauli X operator applied to the $j$ register. This is the mixing unitary, which induces interference between related solutions. Other mixers are introduced for use in the NVQWOA in section \ref{sec:NVQWOA}.
+The initial state for the QAOA is an equal superposition state over the computational basis states:
+$$
+\ket{s}=\frac{1}{\sqrt{2^n}}\sum_{\mathbf{x}\in S}\ket{\mathbf{x}}
+$$
+Each qubit encode both choices for the binary decision variable for its register, so all the qubits taken together form one `qubit string' that encodes the complete solution space $S$.
+
+Define a unitary operator $U(C, \gamma)$ which depends on an angle $\gamma\in[0,2\pi]$:
+$$
+U(C,\gamma)=e^{i\gamma C}=\prod_{\alpha=1}^m e^{-i\gamma C_\alpha},
+$$
+which is the phase separation unitary. 
+
+Define the operator $B$ which is the sum of all single bit Pauli X operators applied to the $j$th register,
+$$
+B=\sum_{j=1}^n \sigma_j^x.
+$$
+Finally, define the $U(B,\beta)$ operator which depends on the parameter $\beta\in[0,\pi]$:
+$$
+U(B,\beta)=e^{-i\beta B}=\prod_{j=1}^{n} e^{-i\beta \sigma_j^x},
+$$
+which is the mixing unitary. which induces interference between the qubits. Other mixers are introduced for use in the NVQWOA in section \ref{sec:NVQWOA}.
 
 Now, for any integer $p\geq1$, and $2p$ angles $\mathbf{\gamma}=(\gamma_1, ...,\gamma_p)$ and $\mathbf{\beta}=(\beta_1, ...,\beta_p)$ we define the final quantum state:
-$$\ket{\mathbf{\gamma},\mathbf{\beta}}=U(\beta_p)U(\gamma_p)\dots U(\beta_1)U(\gamma_1) \ket{s}$$
-This quantum state is acquired by repeatedly applying $U(\gamma)$ then $U(\beta)$. The action that $U(\gamma)$ has on each individual state is to apply a local phase shift to its complex amplitude proportional to the quality of the solution represented by that state. Because this results in the phases of the solutions being separated from one another, this unitary is called the phase separation unitary. The action that $U(\beta)$ has on each individual state is equivalent to performing a quantum walk on a graph representing the connections between different states.
+$$
+\ket{\mathbf{\gamma},\mathbf{\beta}}=U(B,\beta_p)U(C,\gamma_p)\dots U(B,\beta_1)U(C,\gamma_1) \ket{s}
+$$
+This quantum state is acquired by repeatedly applying $U(C,\gamma)$ then $U(B,\beta)$. The action that $U(C,\gamma)$ has on each individual state is to apply a local phase shift to its complex amplitude proportional to the quality of the solution represented by that state. Because this results in the phases of the solutions being separated from one another, this unitary is called the phase separation unitary. $U(B,\beta)$ induces interference between the complex amplitudes. The action of $U(B,\beta)$ is equivalent to a continuous-time quantum walk (CTQW) on a graph, with solutions as the vertices of the graph and the edges connecting solutions that differ by only one binary decision variable, i.e. a hypercube. A CTQW 
 
 We can now do the usual VQA method of measuring the expectation value, optimising the parameters $\mathbf{\gamma}$ and $\mathbf{\beta}$, and repeating to obtain good approximations of the optimal solution.
 
 \subsection{Challenges}
-Although VQAs are a promising platform for NISQ computing, their effective performance relies on the computationally expensive tuning of an often prohibitively large number of variational parameters. Additionally, the performance of these variational algorithms is highly dependent on the initialisation of the variational parameters.
+Although VQAs and the QAOA are a promising platform for NISQ computing, their effective performance relies on the computationally expensive tuning of an often prohibitively large number of variational parameters. Additionally, the performance of these variational algorithms is highly dependent on the initialisation of the variational parameters.
 
 Therefore, it can be argued that VQAs replace one difficult optimisation problem with another difficult optimisation problem.
 
