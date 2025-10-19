@@ -5,11 +5,11 @@ $$\mathbf{x}^* = \arg\min_{\mathbf{x} \in S} f(\mathbf{x})
 \mathbf{x}^* = \arg\max_{\mathbf{x} \in S} f(\mathbf{x})$$
 The structure of the objective function is determined by the problem definition. The problem definition consists of a series of criteria which are defined on a subset of the variables in $\mathbf{x}$, and the objective function conveys the extent to which a solution satisfies the criteria.
 
-Combinatorial optimisation problems are often NP-hard, meaning that no known polynomial-time algorithm can exactly solve all instances of the problem. Examples of NP-hard combinatorial optimisation problems include the travelling salesman problem and the knapsack problem.
+Combinatorial optimisation problems are often NP-hard, meaning that no known polynomial-time algorithm can exactly solve all instances of the problem. Examples of NP-hard combinatorial optimisation problems include the travelling salesman problem \cite{QUBO-traveling} and the knapsack problem \cite{knap-sack}.
 
 The main challenge in solving these problems is that they often require a near-exhaustive search of the solution space, which usually grows exponentially or super-exponentially with problem size. An example of this super-exponential growth will be present in the graph similarity problem in section \ref{graph_sim_section}.
 
-Research in combinatorial optimisation algorithms showing exponential speedup includes:
+Research in combinatorial optimisation algorithms showing exponential speedup includes \cite{thoughts-graphsimilarity}:
 \begin{itemize}
     \item Exact algorithms that find optimal solutions for special problem instances with certain properties. 
     \item Approximate algorithms that find solutions which are near the optimal solutions for general problem instances.
@@ -17,12 +17,8 @@ Research in combinatorial optimisation algorithms showing exponential speedup in
 
 Approximate algorithms are the focus of this thesis, as they can be applied to a wide range of practical problems, and are an area of active research in quantum computing \cite{QAOA_graph_sim,quantum-distinguishability}.
 
-To quantify how close a solution $\mathbf{x}_i$ is to the optimal solution, the approximation ratio $A$ is used:
-$$A_i = \frac{f(\mathbf{x}_i)}{f(\mathbf{x}^*)}$$
-This value compares the objective value of a solution against the maximum possible objective value. A successful approximate combinatorial optimisation algorithm should find solutions which give approximation ratios close to 1.
-
 \section{Graph Similarity Problem}\label{graph_sim_section}
-The graph similarity problem involves determining how similar two graphs are to each other. This can be useful in various applications, such as social network analysis, bioinformatics, and pattern recognition. 
+The graph similarity problem involves determining how similar two graphs are to each other. This can be useful in various applications, such as social network analysis, bioinformatics, and pattern recognition \cite{social-networks,bioinformatics,databases}. 
 
 There is a need to distinguish between the graph similarity problem and the graph isomorphism problem.
 
