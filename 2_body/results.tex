@@ -99,20 +99,22 @@ The average amplification distributions, shown in Figure \ref{fig:similarity amp
     \label{fig:osp}
 \end{figure}
 
-It is evident from Figure \ref{fig:osp} that the NVQWOA performs well in the average case to increase the probability of measuring the optimal solution. In the previous section, the fixed hyperparameter problem amplified its OSP from  to the optimised hyperparameters in the equivalent $n=9$ problem set here, we see that the final optimal solution probability has increased on a 0.06366 to 0.23 for OSP, and 0.07 for EV and CVaR.
+It is evident from Figure \ref{fig:osp} that the NVQWOA performs well in the average case to increase the probability of measuring the optimal solution. In the previous section, the fixed hyperparameter problem amplified its optimal solution probability from $2.76\times 10^{-6}$ to 0.051 over $p=30$ iterations. The optimised hyperparameters in the equal-size $n=9$ problem set only recieved $p=10$ iterations, but they still achieved a final optimal solution probability of 0.068 for EV, 0.230 for OSP, and 0.071 for CVaR. OSP is expected to perform well in this measure, but the values for EV and CVaR provide strong evidence for the role of hyperparameter optimisation in the NVQWOA.
 
 \subsection{Distance Analysis}
 We next analysed the distance between each solution and the optimal solution(s) to determine the degree to which amplification favours solutions close to the optimum in the solution space. The measures of distance used were Hamming distance and subshell distance, described in section \ref{sec:solution distance}.
 
-As shown in Figure \ref{fig:ham improvement}, the mean Hamming distance decreased significantly after amplification, with X and Y and Z as the average reductions.
+We calculated the mean Hamming distance before and after amplification for each problem instance and for each hyperparameter optimisation objective function. The change in the mean Hamming distance before and after amplification is represented as the boxplots shown in Figure \ref{fig:ham improvement}. On average, the algorithm was successful at significantly reducing the mean Hamming distance. However, the plots show that the variance in these distributions was large, and the Hamming distance was not significantly changed for certain problem instances. The minimum improvement in mean Hamming distance was mostly unaffected by increasing problem size, which may suggest that the source of variance was the structure of the problem instances.
+
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=\textwidth]{hamming_improvement_boxplot_multiple.png}
-    \caption{Simulation results of the NVQWOA applied to 30 graphs at (left)$n=8$, (center) $n=9$, (right) $n=10$. Boxplots representing the distribution of improvements in mean Hamming distance. The Initial Mean (red)}
+    \caption{Simulation results of the NVQWOA applied to 30 graphs at (left)$n=8$, (center) $n=9$, (right) $n=10$. Boxplots representing the distribution of improvements in mean Hamming distance. The initial mean (black) represents the mean Hamming distance before amplification was applied.}
     \label{fig:ham improvement}
 \end{figure}
 
-Figure \ref{fig:amp vs ham} shows how much amplification was applied to each solution based on their Hamming distance. The optimal solutions received average amplifications of X,Y and Z.
+Figure \ref{fig:amp vs ham} shows how much amplification was applied to each solution based on their Hamming distance. The minimum Hamming distance to a non-optimal solution is 2, because the solutions to the graph similarity problem consist of permutations. More concretely, vertex mappings swap the labels of two vertices, so the minimal non-identity permutation differs from the identity permutation in two postions. The optimal solutions when optimising for EV received average amplifications of 4385, 14875 and 39893 for $n=8,9,10$. The $n=9$ fixed hyperparameter case applied an amplification of 18391 to its optimal solution, so on average, EV hyperparameter optimisation did not apply more amplification to the optimal solution. However, the fixed parameter case was ran for $p=30$ iterations and actually had an amplification of 6819 when $p=10$. Deeper quantum circuits are desirable, but these results show we can achieve nearly the same results with shallower circuits that implement hyperparameter optimisation. For instance, CVaR and OSP both outperformed EV, applying more amplification to the optimal solution and more attenuation to distant solutions.
+
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=\textwidth]{amplification_vs_hamming_multiple.png}
@@ -120,17 +122,8 @@ Figure \ref{fig:amp vs ham} shows how much amplification was applied to each sol
     \label{fig:amp vs ham}
 \end{figure}
 
-We also analysed the subshell distance between each solution and the optimal solution(s), which directly reflects the structure of the permutation mixer and the connectivity of the mixing graph.
+We also analysed the subshell distance between each solution and the optimal solution(s), which directly reflects the structure of the permutation mixer and the connectivity of the mixing graph. Figure \ref{fig:amp vs sub} is similar to Figure \ref{fig:amp vs ham}, but plots amplfication against subshell distance instead of Hamming distance. Comparing the two plots, we see that the amplification is monotonically decreasing with subshell distance, but is not monotonically decreasing with Hamming distance and is generally less smooth. This is because the subshell distance is more naturally related to the structure of the mixer. The Hamming distance can give the same value for solutions that are a different distance away on the mixing graph. For example, $(1,2,3,4)$ has a Hamming distance of 4 from both $(2,1,4,3)$ and $(2,3,4,1)$, but the subshell distances would be 2 and 3 respectively. We can see this degeneracy in Figure \ref{fig:amp vs ham} starting at a Hamming distance of 4. In contrast, the subshell distance directly encodes the distance between solutions on the mixing graph, and the distance determines how much complex amplitude a solution receives from other solutions.
 
-Figure \ref{fig:sub improvement} shows the difference in mean subshell distance after amplification.
-\begin{figure}[htbp]
-    \centering
-    \includegraphics[width=\textwidth]{subshell_improvement_boxplot_multiple.png}
-    \caption{Improvement in subshell distance boxplot.}
-    \label{fig:sub improvement}
-\end{figure}
-
-Figure \ref{fig:amp vs sub} shows how much amplification was applied to each solution based on their subshell distance. These plots are monotonically decreasing. 
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=\textwidth]{amplification_vs_subshell_multiple.png}
@@ -139,10 +132,24 @@ Figure \ref{fig:amp vs sub} shows how much amplification was applied to each sol
 \end{figure}
 
 
-\subsection{Hyperparameter Analysis}
-We optimised the three NVQWOA hyperparameters $\beta, \gamma, t$ under three different objective functions applied to the final state: the expected value (EV), the probability of measuring an optimal solution (OSP), and the conditional value at risk (CVaR). The mean hyperparameters for each problem size and hyperparameter optimisation objective function are in Tables \ref{tab:n=8}, \ref{tab:n=9}, \ref{tab:n=10}.
+Figure \ref{fig:sub improvement} TODO: SOMETHING HERE
 
-The standard errors for the means of the hyperparameters are small compared to the hyperparameters themselves, indicating there is low variance in the optimal hyerparameters between problem instances. This aligns with the existing literature suggesting that similar hyperparameter values can be used near-optimally across different problem instances \cite{bennett2024nonvariational,bennett2024analysisnonvariationalquantumwalkbased}.
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{subshell_improvement_boxplot_multiple.png}
+    \caption{Improvement in subshell distance boxplot.}
+    \label{fig:sub improvement}
+\end{figure}
+
+
+\subsection{Hyperparameter Analysis}
+As described in section \ref{sec:parameters}, we optimised the three NVQWOA hyperparameters $\beta, \gamma, t$ under three different objective functions applied to the final state: the expected value (EV), the probability of measuring an optimal solution (OSP), and the conditional value at risk (CVaR). The hyperparameters were initialised as $\gamma=1.0, t=0.1, \beta=0.4$. The mean hyperparameters for each problem size and hyperparameter optimisation objective function are recorded in Tables \ref{tab:n=8}, \ref{tab:n=9}, \ref{tab:n=10}.
+
+Across all problem sizes studied, optimisation according to OSP consistently produced the strongest amplification of the optimal solution, as expected given that it directly targets this quantity. However, this approach is not physically realisable without prior knowledge of the solution and is therefore best understood as an upper bound on achievable performance. CVaR-optimised parameters produced results close to this upper bound, typically outperforming EV optimisation in both amplification strength and probability mass concentration around near-optimal solutions. This aligns with previous findings that CVaR focuses the optimisation landscape on the most important region of the state space, reducing the impact of low-quality solutions and accelerating convergence \cite{cvar_opt,CVaR_quantum}. EV optimisation, while yielding the lowest amplification overall, remains the most experimentally accessible because it relies only on measurements of the expectation value and requires significantly fewer samples. Fixed hyperparameters were consistently outperformed by optimised hyperparameters, even though the fixed case was a much deeper cicuit at $p=30$ iterations while the optimised set had only $p=10$.
+
+The optimised hyperparameter values exhibited relatively low variance across problem instances, suggesting a degree of robustness in the algorithm's hyperparameter landscape. In particular, the values of $\gamma$ and $t$ suggest a scaling trend with increasing problem size, $\gamma$ increasing and $t$ decreasing. This behaviour likely reflects how as the solution space increases in size, the applied phase separation needs to increase to apply more amplification, and the mixing times need to decrease to minimise the probability amplitude distributed from the optimal parameters to the suppressed sub-optimial solutions. The parameter $\beta$, which determines how the magnitudes of $\gamma$ and $t$ change during the algorithm, remain comparatively stable across all instances, suggesting that its optimal value is less sensitive to problem size than those of $\gamma$ and $t$. 
+
+These observations highlight two key points. First, although precise tuning can enhance performance, the NVQWOA's amplification is not sharply peaked around a single set of hyperparameters, implying a broad region of parameter space where useful amplification occurs. This property reduces the classical overhead associated with hyperparameter tuning, which is a major limitation of variational approaches such as the QAOA. Second, the differing performance characteristics of the three hyperparameter optimisation objective functions illustrate a trade-off between performance and feasibility. EV optimisation offers a realistic path to implementing the algorithm on near-term quantum hardware, while CVaR provides some benefits to performance if more advanced measurement and feedback strategies are deployed, and OSP serves as an unfeasible upper bound for the best-case hyperparameters.
 
 \begin{table}[htbp]
     \centering
@@ -184,7 +191,11 @@ The standard errors for the means of the hyperparameters are small compared to t
 
 
 \section{Subshell Analysis}
-Figure \ref{fig:mqg} shows the mean quality gap between the optimal solutions and the subshells. For all problem instances, the mean quality gap was a monotonically increasing function with subshell distance.
+The final analyses investigated the underlying graph similarity problem structure and the suitability of the permutation mixer for these problems. The calculations were performed using the same set of problems as the previous section, 30 problems for each of $n=8,9,10$. 
+
+The suitability of the permutation mixer for the unlabelled graph similarity problem is supported by the quality gap and variance analyses. Figure \ref{fig:mqg} shows the mean quality gap between the optimal solutions and the subshells. For all problem instances, the mean quality gap was a monotonically increasing function with subshell distance, adhering to the second condition of the mixer, that solutions further from the optimum are of systemically lower quality than solutions close to the optimum. This structure enables the NVQWOA to exploit the mixing process effectively, as described in section \ref{sec:subshell}.
+
+
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=\textwidth]{mean_quality_gap_vs_subshell_distance.png}
@@ -192,12 +203,9 @@ Figure \ref{fig:mqg} shows the mean quality gap between the optimal solutions an
     \label{fig:mqg}
 \end{figure}
 
-Figure \ref{fig:shell variance} shows the amount of variance in the objective values for each subshell.
-Lower variance indicates the solutions within the shell are of similar quality to one another. The optimal solutions always have a similarity of 1 in the problems we constructed, so the variance within subshell $h=0$ is always 0. The maximum subshell variance was X, for subshell $h$ in problem $k$. FIND THIS
+The phase-coherence of the structure within each subshell is supported by Figure \ref{fig:shell variance}, which shows the amount of variance in the objective values for each subshell. Lower variance indicates the solutions within the shell are of similar quality to one another. The optimal solutions always have a similarity of 1 in the problems we constructed, so the variance within subshell $h=0$ is always 0. The maximum subshell variance was 0.0127, which was in subshell $h=1$, problem $\text{seed}=20$. This suggests that each subshell should remain phase coherent and adhere to the second condition of the NVQWOA.
 
-The second-order variance for $n=8$ was 4.7e-06, $n=9$ was 3.2e-06, $n=10$ was 2.0e-06.
-
-These subshell variance trends provide support to the theoretical conditions of the NVQWOA. The small subshell variances as shown in Figure \ref{fig:shell variance} show that the mean quality is an accurate measure to describe the qualities within each subshell. This is further quantified by the small second-order variances, which imply similar levels of variance across the subshells. The spread of qualities will not significantly change between subshells, just the mean. Pairing this with a monotonically increasing mean cost gap over subshell distance implies each subshell behaves similarly, so no matter where the optimal solution is in the mixing graph, a good choice of hyperparameters will successfully amplify the optimal solution.
+The second-order variances were calculated for $n=8,9,10$ to be $4.7\times 10^{-6}, 3.2\times 10^{-6}, 2.0\times 10^{-6}$. These small second-order variances  imply similar levels of variance across the subshells. The spread of qualities will not significantly change between subshells, just the mean. Pairing this with a monotonically increasing mean cost gap over subshell distance implies each subshell behaves similarly, so no matter where the optimal solution is in the mixing graph, a good choice of hyperparameters will successfully amplify the optimal solution.
 
 \begin{figure}[htbp]
     \centering
