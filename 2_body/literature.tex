@@ -36,7 +36,7 @@ In contrast, the graph similarity problem is the problem of calculating how clos
     \item \textit{Graph Edit Distance (GED):} Counts how many `edits' are required to transform one graph into another, where `edits' include inserting/deleting a vertex or edge, or substituting one vertex or edge with another. The lower the distance, the more similar the two graphs are. TODO: CITATIONS
     \item \textit{Maximum Common Subgraph (MCS):} Finds the largest induced subgraph that is common to the two given graphs. The larger the subgraph, the more similar the two graphs are.
     \item \textit{Frobenius Distance:} Calculates the distance between two graphs using the difference between their adjacency matrices. The lower the distance, the more similar the two graphs are.
-    \item \textit{Edge Overlap:} Finds the proportion of matching entries in the adjacency matrices of the graphs. The greater the proportion, the more similar the two graphs are.\cite{QAOA_graph_sim}
+    \item \textit{Edge Overlap (EO):} Finds the proportion of matching entries in the adjacency matrices of the graphs. The greater the proportion, the more similar the two graphs are.\cite{QAOA_graph_sim}
 \end{itemize}
 
 The choice of measure often depends on the specific application and the properties of the graphs being compared. Considerations such as cost, time, and interpretability inform which measure is best for a practical problem.
@@ -57,7 +57,14 @@ So to satisfy Koutra's axioms, we must find a mapping between the graphs that ma
 
 To find the best mapping between labelled graphs, one can simply `pair up' the vertices in the graphs so that each pair consists of one vertex from each graph that share the same label. This significantly reduces the number of possible mappings (often to just 1), so finding the mapping with the maximum similarity is simple.
 
-To find the best mapping between unlabelled graphs is very challenging. In the general case, the similarity associated with every possible permutation of mappings must be checked until either a mapping that shows isomorphism (or another verifiable global maximum) is found, or the entire space of mappings has been searched.
+To find the best mapping between unlabelled graphs is very challenging. In the general case, the similarity associated with every possible permutation of mappings must be checked until either a mapping that shows isomorphism (or another verifiable global maximum) is found, or the entire space of mappings has been searched. An example of this is shown in Figure \ref{fig:lit sim example}
+
+\begin{figure}
+\centering
+\includegraphics[width=\textwidth]{graph similarity hardness.png}
+\caption{Diagram depicting how the choice of vertex mapping affects the edge overlap (EO) between G1 in orange and G2 in black. (Left) depicts the case when the two graphs are maximally aligned, (right) depicts the random case with misalignment.}
+\label{fig:lit sim example}
+\end{figure}
 
 As such, the unlabelled graph similarity problem can be defined in terms of a combinatorial optimisation problem.
 
@@ -201,7 +208,7 @@ Each iteration of the NVQWOA applies two unitaries:
 $$U_Q(\gamma)=e^{-i\gamma Q},\;\;U_M(t)=e^{-itA}$$
 where $Q$ is a diagonal operator such that $Q\ket{\mathbf{x}}=f(\mathbf{x})\ket{\mathbf{x}}$ encodes the objective function values, and $A$ is the adjacency matrix of a mixing graph whose vertices correspond with feasible solutions and whose edges connect nearest-neighbour solutions to one another.
 
-The phase-separation unitary applies a phase to each solution states, proportional to the objective value of that solution $f(\mathbf{x})$, while the mixing unitary $U_M(t)$ implements a continuous time quantum walk (CTQW) on the mixing graph, redistributing complex amplitudes through neighbouring solutions. Repeated alternating application of these unitaries produces a designed interference process in which amplitudes associated with optimal or near-optimal solutions interfere constructively, amplifying their measurement probabilities.
+The phase-separation unitary applies a phase shift to each solution state $\ket{\mathbf{x}}$ proportional to the objective value of that solution $f(\mathbf{x})$, while the mixing unitary $U_M(t)$ implements a continuous time quantum walk (CTQW) on the mixing graph, redistributing complex amplitudes through neighbouring solutions. Repeated alternating application of these unitaries produces a designed interference process in which amplitudes associated with optimal or near-optimal solutions interfere constructively, amplifying their measurement probabilities.
 
 The final quantum state after $p$ iterations of each unitary is
 $$\ket{\gamma,t,\beta}=\left[\prod_{i=0}^{p-1} U_M(t_i)U_Q\left(\frac{\pm \gamma_i}{\sigma}\right)\right] \ket{s}$$

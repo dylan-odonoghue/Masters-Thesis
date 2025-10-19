@@ -36,13 +36,15 @@ The number of nodes $n$, was varied to investigate how changing problem sizes ch
 Instead of calculating the similarity between the generated problem instances, the similarity was calculated between each graph and a copy of itself. This ensured similar distributions of similarity would arise between the different problem instances. For instance, the maximum similarity was always 1. Appendix TODO has some problem instances that are not isomorphic to one another.
 
 \section{Phase Separator and Mixer Construction}
-The phase separating unitary was constructed in QuOp. For each vertex mapping, the quality (given as edge overlap) was calculated and stored as an array. This array was converted into a diagonal unitary operator in QuOp.
-
-The mixer was constructed as a column oriented array in Numpy \cite{numpy} and converted to a compressed sparse row format for storage. This sparse matrix could was loaded into QuOp using HDF5 parallel I/O operations\cite{hdf5}.
+The phase separating unitary was constructed in QuOp. For each vertex mapping, the quality (which we may refer to as edge overlap, similarity, or similarity score) was calculated and stored as an array. This array was converted into a diagonal unitary operator in QuOp.
 
 Since we are considering graphs with an equal number of nodes $n$, vertex mappings match the arbitrary vertex indices of each graph to one another with some ordering, $\pi:\{1,...,n\}\to\{1,...,n\}$. (In the unlabelled graph problem, the vertices in each graph can still have indices, just not information that can inform how to match those indices together.) Each $\pi\in\Pi$ corresponds to a distinct reordering of the vertex indices. Therefore, vertex mappings can be equivalently written as permutations of $n$ distinct decision variables.
 
-From this, we can conclude that the correct choice of mixer is the permutation mixer, which connects solutions that are one swap of decision variables away from one another. In terms of vertex mappings, the permutation mixer connects solutions corresponding to mappings which differ only by two vertices that have had their targets swapped. Since these are the nearest neighbours to one another, we can also conclude that the minimum hamming distance from one solution to another is 2.
+From this, we can conclude that the correct choice of mixer is the permutation mixer, which connects solutions that are one swap of decision variables away from one another. Describing solutions in terms of vertex mappings, the permutation mixer connects solutions corresponding to mappings which differ only by two vertices that have had their targets swapped. Since these are the nearest neighbours to one another, we can also conclude that the minimum hamming distance from one solution to another is 2.
+
+Bennett et al. proved that the permutation mixer satisfies the first NVQWOA condition, described in \ref{sec:subshell}, and suggested approaches to simulating the permutation mixer \cite{bennett2024analysisnonvariationalquantumwalkbased}.
+
+We constructed the mixer by explicitly generating the sets of nearest-neighbours for each solution, storing the matrix as a column oriented array in Numpy \cite{numpy} and converted to a compressed sparse row format for storage. This sparse matrix was loaded into QuOp using HDF5 parallel I/O operations\cite{hdf5}.
 
 \section{Hyperparameter Optimisation} \label{sec:parameters}
 The NVQWOA has three hyperparameters: $\gamma, t, \beta$. Although sub-optimal parameters can produce quantum circuits that significantly amplify optimal and near-optimal solutions, it is expected that finding optimal values for these hyperparameters through three-dimensional numerical optimisation will give the best possible results.\cite{bennett2024analysisnonvariationalquantumwalkbased}
