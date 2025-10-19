@@ -59,7 +59,7 @@ To find the best mapping between labelled graphs, one can simply `pair up' the v
 
 To find the best mapping between unlabelled graphs is very challenging. In the general case, the similarity associated with every possible permutation of mappings must be checked until either a mapping that shows isomorphism (or another verifiable global maximum) is found, or the entire space of mappings has been searched. An example of vertex mappings is shown in Figure \ref{fig:lit sim example}, which shows how edge overlap (EO) and graph edit distance (GED) are strongly affected by the choice of a vertex mapping.
 
-\begin{figure}
+\begin{figure}[htbp]
 \centering
 \includegraphics[width=\textwidth]{graph similarity hardness.png}
 \caption{Diagram depicting how the choice of vertex mapping affects the similarity between $G_1$ (orange) and $G_2$ (black). (Left) depicts the case when the two graphs are maximally aligned, (right) depicts a random case with misalignment. The network structure of $G_1$ and $G_2$ were not modified, but an alternate vertex mapping $\pi$ was applied to $G_2$ with respect to $G_1$.}
@@ -168,7 +168,14 @@ C(\mathbf{\theta})= \bra{\psi(\mathbf{\theta})}H\ket{\psi(\mathbf{\theta})}.
 $$
 This cost function is estimated on the quantum device via repeated projective measurements in an appropriate basis. A classical optimiser updates $\mathbf{\theta}$ with the aim of minimising (or maximising) $C(\mathbf{\theta})$, thus driving the quantum circuit towards a state that approximates the optimal configuration with respect to the target problem. The algorithm repeatedly prepares this variational quantum state, measures its expectation value, and optimises the parameters until a certain number of iterations is complete or until measurements of the quantum state have an approximation ratio sufficiently close to 1.
 
-To summarise, VQAs consist of a two-step loop: a quantum computer evolves the initial state to a final state via a PQC, then a classical computer measures the expectation value of the final state and uses this data to update the PQC. At the end of this loop, the quantum computer's output is now a good approximation of the optimal configuration.
+To summarise, VQAs consist of a two-step loop, pictured in Figure \ref{fig:vqa schematic}: a quantum computer evolves the initial state to a final state via a PQC, then a classical computer measures the expectation value of the final state and uses this data to update the PQC. At the end of this loop, the quantum computer's output is now a good approximation of the optimal configuration.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.75\textwidth]{VQA Schematic.png}
+    \caption{Schematic diagram of a variational quantum algorithm structure. The yellow boxes are operations performed on a quantum computer}
+    \label{fig:vqa schematic}
+\end{figure}
 
 \subsection{QAOA}
 The Quantum Approximate Optimisation Algorithm (QAOA) is a type of VQA designed to solve combinatorial optimisation problems, introduced by Farhi et al. \cite{QAOA} In this formulation, the PQC $U(\mathbf{\theta})$ is defined by alternating applications of unitaries. One is a quality-based phase separation unitary $U(C,\gamma)$ associated with the problem instance and the other is a mixer $U(B,\beta)$ that induces interference.
@@ -205,18 +212,26 @@ Now, for any integer $p\geq1$, and $2p$ angles $\mathbf{\gamma}=(\gamma_1, ...,\
 $$
 \ket{\mathbf{\gamma},\mathbf{\beta}}=U(B,\beta_p)U(C,\gamma_p)\dots U(B,\beta_1)U(C,\gamma_1) \ket{s}
 $$
-This quantum state is acquired by repeatedly applying $U(C,\gamma)$ then $U(B,\beta)$. The action that $U(C,\gamma)$ has on each individual state is to apply a local phase shift to its complex amplitude proportional to the quality of the solution represented by that state. Because this results in the phases of the solutions being separated from one another, this unitary is called the phase separation unitary. $U(B,\beta)$ induces interference between the complex amplitudes. The action of $U(B,\beta)$ is equivalent to a continuous-time quantum walk (CTQW) on a graph, with solutions as the vertices of the graph and the edges connecting solutions that differ by only one binary decision variable, i.e. a hypercube. A CTQW 
+This quantum state is acquired by repeatedly applying $U(C,\gamma)$ then $U(B,\beta)$. The action that $U(C,\gamma)$ has on each individual state is to apply a local phase shift to its complex amplitude proportional to the quality of the solution represented by that state. Because this results in the phases of the solutions being separated from one another, this unitary is called the phase separation unitary. $U(B,\beta)$ induces interference between the complex amplitudes, and is often called a transverse-field Hamiltonian, because it is defined as the sum of Pauli X operators that act transversely to the computational basis defined by Pauli Z operators. This allows all computational basis states to be reached from any other via the repeated application of $U(B,\beta)$. This mixing action caused by $U(B,\beta)$ is equivalent to a continuous-time quantum walk (CTQW) on a graph, with solutions as the vertices of the graph and the edges connecting solutions that differ by only one binary decision variable, i.e. a hypercube in $n$ dimensions \cite{bennett2024nonvariational}. 
 
-We can now do the usual VQA method of measuring the expectation value, optimising the parameters $\mathbf{\gamma}$ and $\mathbf{\beta}$, and repeating to obtain good approximations of the optimal solution.
+After obtaining the final quantum state $\ket{\mathbf{\gamma},\mathbf{\beta}}$ we can now do the usual VQA method of taking several shots to measure the expectation value, optimising the parameters $\mathbf{\gamma}$ and $\mathbf{\beta}$ according to our results, and repeating to obtain good approximations of the optimal solution. This process is pictured in Figure \ref{fig:qaoa schematic}.
 
-\subsection{Challenges}
-Although VQAs and the QAOA are a promising platform for NISQ computing, their effective performance relies on the computationally expensive tuning of an often prohibitively large number of variational parameters. Additionally, the performance of these variational algorithms is highly dependent on the initialisation of the variational parameters.
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.75\textwidth]{QAOA Schematic.png}
+    \caption{Schematic of the QAOA algorithm \cite{QAOA_graph_sim}}
+    \label{fig:qaoa schematic}
+\end{figure}
 
-Therefore, it can be argued that VQAs replace one difficult optimisation problem with another difficult optimisation problem.
+\section{Challenges and Gaps in Literature}
+Applying the QAOA to the graph similarity problem is challenging, particularly because the QAOA encodes solutions as bitstrings that can be any combination of binary values. \cite{QAOA,QAOA-review,QAOA-optimiser}. A natural scheme to encode any possible vertex mapping for two graphs, $G_1$ and $G_2$, each with $n$ vertices requires $n^2$ bits (each bit represents one of $n$ vertices in $G_1$ mapping to one of $n$ possible vertices in $G_2$). This implies a possible solution space with $|S|=2^{n^2}$. However, the solutions to graph similarity problems take the form of permutations, where each vertex must map to a unique partner, so the size of the feasible solution space is $|S|=n!$. The form of the solutions being constrained this way means the vast majority of solutions will be unfeasible $(n!\ll 2^{n^2})$. 
+
+To deal with unfeasible solutions in the QAOA, most studies include penalty terms into their objective functions that reduce the quality of unfeasible solutions \cite{QUBO-traveling, QUBO_VRP}. While effective in principle, this approach increases the complexity of the cost landscape and the number of parameters to be optimised, adding to the numerical overhead. Pritchard et. al applied the QAOA to the graph similarity problem using a novel encoding that reduced the number of required qubits \cite{QAOA_graph_sim}. Although amplification of optimal solutions was demonstrated, achieving strong performance required global parameter optimisation involving thousands of cost function evaluations, even for relatively shallow circuits with $p\in[1,6]$. These computational demands limited the study to graphs with $n\leq 9$.
+
+More broadly, the effectiveness of VQAS including QAOA relies on the computationally expensive optimisation of often large sets of variational parameters \cite{QAOA-optimiser}. Their performance is highly dependent on the initial choices of parameters prior to training \cite{QAOA-review}. As Bennett et. al argues, VQAs can end up replacing one difficult optimisation problem with another \cite{bennett2024nonvariational}. This motivates the search for alternative quantum optimisation approaches that retain strong performance while reducing classical optimisation overhead. One such approach is the non-variational quantum walk-based optimisation algorithm (NVQWOA), which is described in the following section.
 
 \section{Non-Variational Quantum Walk-based Optimisation Algorithm}\label{sec:NVQWOA}
-\subsection{Overview}
-The NVQWOA is a novel algorithm introduced by Bennett et al. that builds upon and addresses the variational challenges of the QAOA\cite{bennett2024nonvariational,bennett2024analysisnonvariationalquantumwalkbased}. 
+The NVQWOA is a novel algorithm introduced by Bennett et al. that builds upon and addresses the variational challenges of the QAOA \cite{bennett2024nonvariational,bennett2024analysisnonvariationalquantumwalkbased}. 
 Like the QAOA, it alternates between applying two unitaries: a phase-separation unitary that encodes the objective function into the complex phase of the states and a mixing unitary that induces quantum interference between the solutions. Unlike QAOA or other VQAs, the parameters defining the unitaries are not variationally tuned by a classical optimiser. Instead, they are predetermined by the choice of only three hyperparameters $\gamma, t, \beta$. Additionally, the structure of the mixer is chosen to match the structure of the problem, to connect nearest-neighbour solutions to one another.
 
 Simulations have demonstrated that this non-variational approach yields rapid convergence to global optima across diverse problem types, including MaxCut, maximum independent set, k-means clustering, capacitated facility location, and the quadratic assignment problem, using only modest circuit depths and a handful of iterations \cite{bennett2024analysisnonvariationalquantumwalkbased}.
@@ -224,23 +239,32 @@ Simulations have demonstrated that this non-variational approach yields rapid co
 \subsection{Algorithm Description}
 Using the terms and definitions of combinatorial optimisation problems from Section \ref{sec:cop}:
 
-The algorithm begins with an initial superposition over all possible solution states:
-$$\ket{s}=\frac{1}{\sqrt{N}}\sum_{\mathbf{x}\in S}\ket{\mathbf{x}}$$
-
-Each iteration of the NVQWOA applies two unitaries:
-$$U_Q(\gamma)=e^{-i\gamma Q},\;\;U_M(t)=e^{-itA}$$
+The algorithm begins with an initial superposition over all possible solution states
+$$
+\ket{s}=\frac{1}{\sqrt{N}}\sum_{\mathbf{x}\in S}\ket{\mathbf{x}}.
+$$
+Each iteration of the NVQWOA applies two unitaries
+$$
+U_Q(\gamma)=e^{-i\gamma Q},\;\;U_M(t)=e^{-itA},
+$$
 where $Q$ is a diagonal operator such that $Q\ket{\mathbf{x}}=f(\mathbf{x})\ket{\mathbf{x}}$ encodes the objective function values, and $A$ is the adjacency matrix of a mixing graph whose vertices correspond with feasible solutions and whose edges connect nearest-neighbour solutions to one another.
 
 The phase-separation unitary applies a phase shift to each solution state $\ket{\mathbf{x}}$ proportional to the objective value of that solution $f(\mathbf{x})$, while the mixing unitary $U_M(t)$ implements a continuous time quantum walk (CTQW) on the mixing graph, redistributing complex amplitudes through neighbouring solutions. Repeated alternating application of these unitaries produces a designed interference process in which amplitudes associated with optimal or near-optimal solutions interfere constructively, amplifying their measurement probabilities.
 
 The final quantum state after $p$ iterations of each unitary is
-$$\ket{\gamma,t,\beta}=\left[\prod_{i=0}^{p-1} U_M(t_i)U_Q\left(\frac{\pm \gamma_i}{\sigma}\right)\right] \ket{s}$$
+$$
+\ket{\gamma,t,\beta}=\left[\prod_{i=0}^{p-1} U_M(t_i)U_Q\left(\frac{\pm \gamma_i}{\sigma}\right)\right] \ket{s},
+$$
 where the $\pm$ accounts for whether the goal is minimisation ($-$) or maximisation ($+$), $\sigma$ is the standard deviation of the initial objective function landscape (which can be efficiently approximated through random sampling of $p=0$), $t_i$ and $\gamma_i$ are obtained from specific formulae in terms of $\gamma, t,$ and $\beta$ and where $\gamma>0, t>0,$ and $0<\beta<1$:
-$$\gamma_i=\left(\beta + (1-\beta)\frac{i}{p-1} \right)\gamma,\;\;t_i=\left(1- (1-\beta)\frac{i}{p-1} \right)t$$
-So the angles $\gamma_i$ increase linearly with $i$ and the mixing times $t_i$ decrease linearly with $i$.
+$$
+\gamma_i=\left(\beta + (1-\beta)\frac{i}{p-1} \right)\gamma,\;\;t_i=\left(1- (1-\beta)\frac{i}{p-1} \right)t,
+$$
+so the angles $\gamma_i$ increase linearly with $i$ and the mixing times $t_i$ decrease linearly with $i$.
 
 \subsection{Mixing Unitary}
 A key conceptual advance of the NVQWOA lies in the explicit construction of a problem-structured mixing graph (also referred to as mixing unitary or mixer). The vertices of the graph represent feasible solutions, and edges connect nearest neighbour configurations, typically those separated by a minimal Hamming distance or by a single elementary move. The resulting adjacency matrix $A$ defines a vertex-transitive graph whose degree $d$ is polynomial in problem size.
+
+Because the mixer only connects the feasible solutions to one another, complex amplitudes are only distributed across feasible solution states, so the NVQWOA is able to avoid most of the problems caused by unfeasible solutions. For certain problems where the unfeasibility is not due to the inherent structure of the solution, penalty terms may still need to be added \cite{bennett2024nonvariational,bennett2024analysisnonvariationalquantumwalkbased}.
 
 \subsubsection{Mixer Examples}
 
@@ -254,13 +278,23 @@ In his work, Bennett provides some examples of mixing graphs with known efficien
 
 The choice of mixing graph directly determines how probability amplitudes are propagated, making it possible to exploit problem structure, unlike the transverse-Hamiltonian mixer in the QAOA, which applies the same mixer to all combinatorial optimsiation problems\cite{QAOA}.
 
+
+
 \subsubsection{Mixer Subshells}\label{sec:subshell}
-The distance $dist(u,v)$ between two vertices $u,v$ on a graph is the minimum length of the paths connecting them. A subshell is a subset of the vertices of the mixing graph, defined in relation to a reference vertex $u$. The subshell $h_u$ contains all vertices that are a distance $h$ away from $u$. The set of all subshells for a graph form equivalence classes on the set of the vertices of the graph.
+The distance $dist(u,v)$ between two vertices $u,v$ on a graph is the minimum length of the paths connecting them. A subshell is a subset of the vertices of the mixing graph, defined in relation to a reference vertex $u$. The subshell $h_u$ contains all vertices that are a distance $h$ away from $u$. The set of all subshells for a graph form equivalence classes on the set of the vertices of the graph. An example of the subshell structure for a small mixer is shown in Figure \ref{fig:integer mixer}
 
-For the NVQWOA to perform well on a combinatorial optimisation problem, it is expected to satisfy two conditions. First, the action of the mixer must cause probability amplitude from each vertex to be distributed to other vertices such that the complex phase of the distributed probability amplitudes are proportional to their distance on the mixing graph from the initial vertex.
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.75\textwidth]{Integer Mixer Subshells.png}
+    \caption{Example integer mixer for a problem with $n=3,k=3$. The graph is partitioned into subsets $h_{(0,0,0)}$ for $h=0,1,2,3$. \cite{bennett2024analysisnonvariationalquantumwalkbased}}
+    \label{fig:integer mixer}
+\end{figure}
 
-The second condition is that the following relationship should be at least approximately satisfied,
+For the NVQWOA to perform well on a combinatorial optimisation problem, it is expected to satisfy two conditions. First, the action of the mixer must cause probability amplitude from each vertex to be distributed to other vertices such that the complex phase of the distributed probability amplitudes are proportional to their distance on the mixing graph from the initial vertex \cite{bennett2024nonvariational,bennett2024analysisnonvariationalquantumwalkbased}.
+
+The second condition is that the following relationship should be at least approximately satisfied:
 $$
 (\mu_{h\mathbf{x}}-f(\mathbf{x}))\approx -m_h (f(\mathbf{x})-\mu),
 $$
-where $\mu_{h\mathbf{x}}$ is defined as the mean objective function value of solutions contained in $h_{\mathbf{x}}$, $\mu$ is the mean objective function value of all solutions in $S$, and $m_h$ is a positive constant. Also, the proportionality $m_h$ should increase monotonically with increasing $h$ (up to a distance which is a considerable fraction of the graph's diameter $D$)
+where $\mu_{h\mathbf{x}}$ is defined as the mean objective function value of solutions contained in $h_{\mathbf{x}}$, $\mu$ is the mean objective function value of all solutions in $S$, and $m_h$ is a positive constant. Also, the proportionality $m_h$ should increase monotonically with increasing $h$ (up to a distance which is a considerable fraction of the graph's diameter $D$).
+
