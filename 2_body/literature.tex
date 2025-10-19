@@ -227,11 +227,7 @@ The choice of mixing graph directly determines how probability amplitudes are pr
 \subsubsection{Mixer Subshells}\label{sec:subshell}
 The distance $dist(u,v)$ between two vertices $u,v$ on a graph is the minimum length of the paths connecting them. A subshell is a subset of the vertices of the mixing graph, defined in relation to a reference vertex $u$. The subshell $h_u$ contains all vertices that are a distance $h$ away from $u$. The set of all subshells for a graph form equivalence classes on the set of the vertices of the graph.
 
-For the NVQWOA to perform well on a combinatorial optimisation problem, it is expected to satisfy two conditions. First, the action of the mixer on an arbitrary solution state $\ket{\mathbf{u}}$ must be as follows:
-$$
-U_M(t)\ket{\mathbf{u}}=\sum_{h=0}^D \left(e^{-ih\phi(t)} \sum_{\mathbf{x}\in h_{\mathbf{u}}} r_\mathbf{x}(t)\ket{\mathbf{x}} \right),
-$$
-where $D$ is the diameter of the mixing graph and (for sufficiently small $t$) $r_\mathbf{x}$ and $\phi$ are positive real-valued functions, and $0<\phi(t)<\pi$. In essence, probability amplitude from an initial vertex is distributed to other vertices such that the complex phase of the distributed probability amplitudes are proportional to their distance from the initial vertex.
+For the NVQWOA to perform well on a combinatorial optimisation problem, it is expected to satisfy two conditions. First, the action of the mixer must cause probability amplitude from each vertex to be distributed to other vertices such that the complex phase of the distributed probability amplitudes are proportional to their distance on the mixing graph from the initial vertex.
 
 The second condition is that the following relationship should be at least approximately satisfied,
 $$

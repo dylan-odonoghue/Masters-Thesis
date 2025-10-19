@@ -30,9 +30,9 @@ The first part of the analysis was performed on a randomly chosen graph. The see
 \end{figure}
 
 
-Figures \ref{fig:2025 osp} and \ref{fig:2025 similarity dist} analyse the effect of the NVQWOA when applied to the graph $n=9$, seed$=2025$. From these results it is clear that probability amplitude has been channelled primarily into optimal and near-optimal solutions. 
+Figures \ref{fig:2025 osp} and \ref{fig:2025 similarity dist} analyse the effect of the NVQWOA when applied to the graph $n=9$, seed$=2025$. The hyperparameters were set to $\gamma=1.0, t=0.1, \beta=0.4$. From these results it is clear that probability amplitude has been channelled primarily into optimal and near-optimal solutions. 
 
-In Figure \ref{fig:2025 osp}, the NVQWOA outperforms Grover's algorithm for an equivalent number of iterations. Since Grover's algorithm is optimal for searching an unstructured database \cite{grover_optimal}, this suggests the the NVQWOA is successfully using the structure of the problem (as embedded in the phase separation and mixing unitaries) to amplify the optimal solutions. Another feature of note is that after $p=15$ iterations, the OSP$=0.0636607501$ is at a maximum, and after this point, the OSP decreases with further iterations until it reaches 0.0342996063. The OSP appears to oscillate between those values, and ends on a value of 0.0506801642.
+In Figure \ref{fig:2025 osp}, the NVQWOA outperforms Grover's algorithm for an equivalent number of iterations. Since Grover's algorithm is optimal for searching an unstructured database \cite{grover_optimal}, this suggests the the NVQWOA is successfully using the structure of the problem (as embedded in the phase separation and mixing unitaries) to amplify the optimal solutions. Another feature of note is that after $p=15$ iterations, the OSP$=0.0636607501$ is at a maximum, and after this point, the OSP decreases with further iterations until it reaches 0.0342996063. The OSP appears to oscillate between those values, and ends on a value of 0.0506801642. This is caused by the phase-separation unitary. As discussed in section \ref{sec:NVQWOA}, $U_Q$ applies a local phase shift to each solution proportional to its quality. Repeated application of $U_Q$ causes the phase of the solutions to rotate at different speeds relative to the iteration of the NVQWOA, so a solution with high quality may roate its phase  
 
 In Figure \ref{fig:2025 similarity dist}, the expected value for the similarity has increased from 0.556927 to 0.840676. The mode of the distribution has moved from a similarity score that had 90690 states to a similarity score with only 748 states. Even though the probability of measuring the optimal solution has increased, it is not the new mode of the probability distribution. This is because there is only 1 optimal solution, so even though the other solutions have less amplification applied to them, they greatly outnumber the optimal solution usually by two or three orders of magnitude. Therefore, any small amount of probability that they receive can sum up to be greater than the solution receiving the most amplification.
 
@@ -54,32 +54,37 @@ This is further verified in Figure \ref{fig:2025 av amp}. Solutions with similar
 
 
 \section{Multiple Graph Analysis}
-The next phase in the analysis was to perform simulations on many different graphs and observe how the algorithm performs in the average case. For these simulations, the number of iterations was decreased to $p=10$, and hyperparameter optimisation was used to find suitable hyperparameters for each problem. As discussed in section \ref{sec:parameters}, the hyperparameter optimisation objective functions used were expected value (EV), optimal solution probability (OSP), and conditional value at risk (CVaR).
+The next phase in the analysis was to perform simulations on many different graphs and observe how the algorithm performs in the average case. For these simulations, the number of iterations was decreased to $p=10$, and hyperparameter optimisation was used to find suitable hyperparameters for each problem. As discussed in section \ref{sec:parameters}, the hyperparameter optimisation objective functions used were: expected value (EV), optimal solution probability (OSP), and conditional value at risk (CVaR).
 
 \subsection{Algorithm Behaviour and Amplification}
 
-To expand on the results from the previous section, probability distributions for the similarities were analysed. Figures \ref{fig:similarity dist} and \ref{fig:similarity log dist} show the average probability distributions over the possible similarity scores, using a linear probability scale for Figure \ref{fig:similarity dist} and a log probability scale for \ref{fig:similarity log dist}. After amplification, the distributions are skewed towards higher-similarity solutions compared to the initial distribution. In the distributions representing the average final state for OSP, the modes are not shifted as much as the modes for EV or CVaR. This is because CVaR and EV can be improved by shifting up the mode of the probability distribution, even if the optimal solution probability decreases.
+Expanding on the findings from the previous section, probability distributions for the similarities were analysed. Figures \ref{fig:similarity dist} and \ref{fig:similarity log dist} show the averaged probability distributions over the possible similarity scores, using a linear probability scale for Figure \ref{fig:similarity dist} and a log probability scale for \ref{fig:similarity log dist}. After amplification, the distributions are skewed towards higher-similarity solutions compared to the initial distribution. 
 
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=\textwidth]{similarity_distributions_multiple.png} 
-    \caption{Probability distributions for similarity as measured from the initial equal superposition state (black) and the final amplified state.Average simulation results for NVQWOA applied to 30 graphs at (left) $n=8$, (center) $n=9$, (right) $n=10$. (Top) hyperparameters optimised for EV. (Middle) hyperparameters optimised for OSP. (Bottom) hyperparameters optimised for CVaR.}
+    \caption{Linear-scale probability distributions for similarity as measured from the initial equal superposition state (black) and the final amplified state. Average simulation results for NVQWOA applied to 30 graphs at (left) $n=8$, (center) $n=9$, (right) $n=10$. (Top) hyperparameters optimised for EV. (Middle) hyperparameters optimised for OSP. (Bottom) hyperparameters optimised for CVaR.}
     \label{fig:similarity dist}
 \end{figure}
 
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=\textwidth]{log_similarity_distributions_multiple.png} 
-    \caption{Depicts the same distributions as Fig \ref{fig:similarity dist} with a logarithmic y-axis.}
+    \caption{Log-scale probability distributions for similarity as measured from the initial equal superposition state (black) and the final amplified state. Average simulation results for NVQWOA applied to 30 graphs at (left) $n=8$, (center) $n=9$, (right) $n=10$. (Top) hyperparameters optimised for EV. (Middle) hyperparameters optimised for OSP. (Bottom) hyperparameters optimised for CVaR.}
     \label{fig:similarity log dist}
 \end{figure}
 
-Unexpectedly, it appears that for some seeds at $n=8$, optimising the hyperparameters for EV did not amplify the distribution at all. Rather disquieting. find an explanation for this.
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\textwidth]{similarity_amplifications_multiple.png} 
+    \caption{Logarithmic scale solution amplification as a function of solution similarity. Average simulation results for NVQWOA applied to 30 graphs at (left) $n=8$, (center) $n=9$, (right) $n=10$. (Top) hyperparameters optimised for EV. (Middle) hyperparameters optimised for OSP. (Bottom) hyperparameters optimised for CVaR.}
+    \label{fig:similarity amp}
+\end{figure}
 
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=\textwidth]{OSP_boxplot_multiple.png} 
-    \caption{Simulation results of the NVQWOA applied to 30 graphs at (left)$n=8$, (center) $n=9$, (right) $n=10$. Boxplots represent the distribution in probability to measure the optimal solution.}
+    \caption{Simulation results of the NVQWOA applied to 30 graphs at (left) $n=8$, (center) $n=9$, (right) $n=10$. Boxplots represent the distribution in probability to measure the optimal solution.}
     \label{fig:osp}
 \end{figure}
 
@@ -124,34 +129,47 @@ Figure \ref{fig:amp vs sub} shows how much amplification was applied to each sol
 
 
 \subsection{Hyperparameter Analysis}
-We optimised the three NVQWOA hyperparameters $\beta, \gamma, t$ under three different objective functions applied to the final state: the expected value (EV), the probability of measuring an optimal solution (OSP), and the conditional value at risk (CVaR).\ref{tab:n=8}
+We optimised the three NVQWOA hyperparameters $\beta, \gamma, t$ under three different objective functions applied to the final state: the expected value (EV), the probability of measuring an optimal solution (OSP), and the conditional value at risk (CVaR). The mean hyperparameters for each problem size and hyperparameter optimisation objective function are in Tables \ref{tab:n=8}, \ref{tab:n=9}, \ref{tab:n=10}.
 
-Table of mean hyperparameters:
+The standard errors for the means of the hyperparameters are small compared to the hyperparameters themselves, indicating there is low variance in the optimal hyerparameters between problem instances. This aligns with the existing literature suggesting that similar hyperparameter values can be used near-optimally across different problem instances \cite{bennett2024nonvariational,bennett2024analysisnonvariationalquantumwalkbased}.
 
 \begin{table}[htbp]
+    \centering
 \begin{tabular}{c||l|l|l}
-   $n=8$ & $\beta$ & $\gamma$& $t$     \\\hline\hline
-    EV   & 0.47(5) & 0.2(2)  & 0.09(2) \\\hline
-    OSP  & 0.78(2) & 1.01(2) & 0.180(2) \\\hline
-    CVaR & 0.55(2) & 1.15(3) & 0.169(3) \\\hline
+    $n=8$ & $\beta$ & $\gamma$ & $t$     \\\hline\hline
+    EV & 0.55(2) & 1.15(3) & 0.169(3) \\\hline
+    OSP & 0.78(2) & 1.01(2) & 0.180(2) \\\hline
+    CVaR & 0.71(2) & 1.05(3) & 0.173(3) \\\hline
 \end{tabular}
-\caption{Optimisation results for $n=8$. Mean hyperparameters for each optimisation objective function.}
+\caption{Hyperparameter optimisation results for $n=8$.}
 \label{tab:n=8}
 \end{table}
 
-\begin{tabular}{c||l|l|l}
-   $n=9$ & $\beta$  & $\gamma$ & $t$     \\\hline\hline
-    EV   & 0.56(2)  & -1.12(9) & 0.144(7) \\\hline
-    OSP  & 0.81(2)  & 1.05(2)  & 0.164(2) \\\hline
-    CVaR & 0.586(8) & 1.19(2)  & 0.142(2) \\\hline
-\end{tabular}
 
+\begin{table}[htbp]
+    \centering
 \begin{tabular}{c||l|l|l}
-  $n=10$ &$\beta$  & $\gamma$ & $t$     \\\hline\hline
-    EV   & 0.47(6)  & -1.28(4) & 0.15(1) \\\hline
-    OSP  & 0.78(2)  & 1.12(2)  & 0.151(1) \\\hline
-    CVaR & 0.580(6) & 1.28(1)  & 0.124(2) \\\hline
+    $n=9$ & $\beta$ & $\gamma$ & $t$     \\\hline\hline
+    EV & 0.586(8) & 1.19(2) & 0.142(2) \\\hline
+    OSP & 0.81(2) & 1.05(2) & 0.164(2) \\\hline
+    CVaR & 0.73(2) & 1.16(2) & 0.147(2) \\\hline
 \end{tabular}
+\caption{Hyperparameter optimisation results for $n=9$.}
+\label{tab:n=9}
+\end{table}
+
+
+\begin{table}[htbp]
+    \centering
+\begin{tabular}{c||l|l|l}
+    $n=10$ & $\beta$ & $\gamma$ & $t$     \\\hline\hline
+    EV & 0.580(6) & 1.28(1) & 0.124(2) \\\hline
+    OSP & 0.78(2) & 1.12(2) & 0.151(1) \\\hline
+    CVaR & 0.816(9) & 1.13(1) & 0.135(1) \\\hline
+\end{tabular}
+\caption{Hyperparameter optimisation results for $n=10$.}
+\label{tab:n=10}
+\end{table}
 
 
 \section{Subshell Analysis}
@@ -164,9 +182,12 @@ Figure \ref{fig:mqg} shows the mean quality gap between the optimal solutions an
 \end{figure}
 
 Figure \ref{fig:shell variance} shows the amount of variance in the objective values for each subshell.
-Lower variance indicates more phase-coherence within the shell, and therefore more potential for constructive interference with the target solution under optimisation of $t$ and $\gamma$. The maximum subshell variance was X, for subshell $h$ in problem $k$. FIND THIS
+Lower variance indicates the solutions within the shell are of similar quality to one another. The optimal solutions always have a similarity of 1 in the problems we constructed, so the variance within subshell $h=0$ is always 0. The maximum subshell variance was X, for subshell $h$ in problem $k$. FIND THIS
 
 The second-order variance for $n=8$ was 4.7e-06, $n=9$ was 3.2e-06, $n=10$ was 2.0e-06.
+
+These subshell variance trends provide support to the theoretical conditions of the NVQWOA. The small subshell variances as shown in Figure \ref{fig:shell variance} show that the mean quality is an accurate measure to describe the qualities within each subshell. This is further quantified by the small second-order variances, which imply similar levels of variance across the subshells. The spread of qualities will not significantly change between subshells, just the mean. Pairing this with a monotonically increasing mean cost gap over subshell distance implies each subshell behaves similarly, so no matter where the optimal solution is in the mixing graph, a good choice of hyperparameters will successfully amplify the optimal solution.
+
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=\textwidth]{subshell_variance_multiple.png}

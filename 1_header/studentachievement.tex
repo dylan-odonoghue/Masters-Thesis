@@ -1,13 +1,9 @@
-The graph similarity problem is an area of research that QUISA has engaged with 
+This thesis took a rather straightforward path from beginning to end. At the beginning of my degree, Dr. Tavis Bennett presented his novel algorithm, the non-variational quantum walk-based optimisation algorithm. Similar to a few others, I was amazed by the results that he was able to achieve using the NVQWOA, and requested to help benchmark the algorithm. I had done some prior study into graph theory and was strongly motivated by the well-known hardness of graph isomorphism, so I requested to work on graph similarity.
 
-Learnt quantum computation
+To start the project, I began by building foundational knowledge of the quantum algorithms that the NVQWOA is based upon, the QAOA and QWOA. 
 
-QAOA, QWOA, and NVQWOA
+When I moved to simulating the NVQWOA, Tavis provided some initial code that accelerated the beginning of the project. From this, I developed an easy-to-use NVQWOA simulation which was highly interpretable and showed early strong results. This simulation allowed me to test individual pairs of graphs on the NVQWOA, but it was constrained by the hardware requirements from running more problems at a larger problem size. At the time, it was unclear whether the scope of the project would grow to require high-performance computing, but in 2025 it became obvious that the current computational hardware was not enough to move the project forward. The QUISA research group has a strong collaboration with the Pawsey Supercomputing Centre, so I began preparing to run the simulation on their Setonix system.
 
-High-performance computing
+Adapting a highly serialised program into an efficiently parallel program is challenging, but I was lucky enough to receive assistance from Dr. Edric Matwiejew, who guided me in using his QVA simulation package QuOp. The original NVQWOA simulation was completely reconstructed into a parallelised program over several stages. I attempted to push the problem sizes even higher, but computational limits and the super-exponential increase in problem size prevented the project from expanding to much larger problems in time. Instead of narrowing down on simulating bigger problems, I widened my view to investigate the behaviour of the algorithm across many different problem instances, how hyperparameter optimisation could affect the results, and how the problem structure fits with the theoretical conditions for the mixer.
 
-Wrote code to parallelise the NVQWOA using QuOp
-
-Investigated graph similarity using NVQWOA
-
-Contributed to the ASCA Quantum Optimisation group
+Initial work from this investigation was presented at the Quantum Meets Logistics workshop 2025.
