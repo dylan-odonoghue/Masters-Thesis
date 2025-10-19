@@ -18,7 +18,7 @@ Research in combinatorial optimisation algorithms showing exponential speedup in
 Approximate algorithms are the focus of this thesis, as they can be applied to a wide range of practical problems, and are an area of active research in quantum computing \cite{QAOA_graph_sim,quantum-distinguishability}.
 
 \section{Graph Similarity Problem}\label{graph_sim_section}
-The graph similarity problem involves determining how similar two graphs are to each other. This can be useful in various applications, such as social network analysis, bioinformatics, and pattern recognition \cite{social-networks,bioinformatics,databases}. 
+The graph similarity problem involves determining how similar two graphs are to each other. This can be useful in various applications, such as social network analysis, bio-informatics, and pattern recognition \cite{social-networks,bio-informatics,databases}. 
 
 There is a need to distinguish between the graph similarity problem and the graph isomorphism problem.
 
@@ -29,7 +29,7 @@ The graph isomorphism problem is then the task of correctly creating that biject
 In contrast, the graph similarity problem is the problem of calculating how close a pair of graphs are to being isomorphic. This cannot be posed as a `yes-no' problem, as many magnitudes of similarity must meaningfully captured. There are multiple measures of graph similarity. Some examples include:
 
 \begin{itemize}
-    \item \textit{Graph Edit Distance (GED):} Counts how many `edits' are required to transform one graph into another, where `edits' include inserting/deleting a vertex or edge, or substituting one vertex or edge with another. The lower the distance, the more similar the two graphs are. TODO: CITATIONS
+    \item \textit{Graph Edit Distance (GED):} Counts how many `edits' are required to transform one graph into another, where `edits' include inserting/deleting a vertex or edge, or substituting one vertex or edge with another. The lower the distance, the more similar the two graphs are \cite{GED}.
     \item \textit{Maximum Common Subgraph (MCS):} Finds the largest induced subgraph that is common to the two given graphs. The larger the subgraph, the more similar the two graphs are.
     \item \textit{Frobenius Distance:} Calculates the distance between two graphs using the difference between their adjacency matrices. The lower the distance, the more similar the two graphs are.
     \item \textit{Edge Overlap (EO):} Finds the proportion of matching entries in the adjacency matrices of the graphs. The greater the proportion, the more similar the two graphs are.\cite{QAOA_graph_sim}
