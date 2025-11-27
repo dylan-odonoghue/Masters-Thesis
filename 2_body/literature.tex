@@ -176,7 +176,7 @@ To summarise, VQAs consist of a two-step loop, pictured in Figure \ref{fig:vqa s
 \subsection{QAOA}
 The Quantum Approximate Optimisation Algorithm (QAOA) is a type of VQA designed to solve combinatorial optimisation problems, introduced by Farhi et al. \cite{QAOA} In this formulation, the PQC $U(\mathbf{\theta})$ is defined by alternating applications of unitaries. One is a quality-based phase separation unitary $U(C,\gamma)$ associated with the problem instance and the other is a mixer $U(B,\beta)$ that induces interference.
 
-We are given some combinatorial optimisation problem, specified by $m$ clauses and solutions $\mathbf{x}=(x_1,x_2,...,x_n)$ that have binary decision variables $x_j\in\{0,1\}$. Each clause is a constraint on a subset of the decision variables which is satisfied for certain assignments of those bits and unsatisfied for other assignments. The objective function is the number of satsified clauses,
+We are given some combinatorial optimisation problem, specified by $m$ clauses and solutions $\mathbf{x}=(x_1,x_2,...,x_n)$ that have binary decision variables $x_j\in\{0,1\}$. Each clause is a constraint on a subset of the decision variables which is satisfied for certain assignments of those bits and unsatisfied for other assignments. The objective function is the number of satisfied clauses,
 $$
 C(\mathbf{x})=\sum_{\alpha=1}^m C_\alpha(\mathbf{x})
 $$
@@ -272,7 +272,7 @@ In his work, Bennett provides some examples of mixing graphs with known efficien
 
 \textit{Permutation Mixer}: For problems with $n$ integer decision variables $x_j\in\{0,1,...k-1\}$ where the solutions are constrained to not have repeated decision variables. Solutions are connected to the $\frac{1}{2}n(n-1)$ other solutions which are transpositions of each other.
 
-The choice of mixing graph directly determines how probability amplitudes are propagated, making it possible to exploit problem structure, unlike the transverse-Hamiltonian mixer in the QAOA, which applies the same mixer to all combinatorial optimsiation problems\cite{QAOA}.
+The choice of mixing graph directly determines how probability amplitudes are propagated, making it possible to exploit problem structure, unlike the transverse-Hamiltonian mixer in the QAOA, which applies the same mixer to all combinatorial optimisation problems\cite{QAOA}.
 
 
 
